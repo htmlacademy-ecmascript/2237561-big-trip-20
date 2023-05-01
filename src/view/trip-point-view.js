@@ -1,6 +1,7 @@
 import {createElement} from '../render.js';
 
 function createTripPointTemplate() {
+
   return `<li class="trip-events__item">
   <div class="event">
     <time class="event__date" datetime="2019-03-18">MAR 18</time>
@@ -41,8 +42,9 @@ function createTripPointTemplate() {
 }
 
 export default class TripPointView {
+
   getTemplate() {
-    return createTripPointTemplate();
+    return createTripPointTemplate(this.point);
   }
 
   getElement() {
