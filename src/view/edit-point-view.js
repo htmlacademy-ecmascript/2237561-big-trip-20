@@ -1,21 +1,25 @@
 import {createElement} from '../render.js';
 import dayjs from 'dayjs';
 
+const createEventOffers = (offers) => (`<section class="event__section  event__section--offers">
+  ${(offers.length === 0) ? '' : `
+    
+    <div class="event__available-offers">
+      ${offers.map((offer) => `<div class="event__offer-selector">
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer" type="checkbox" name="event-offer-${offer.id}"
+        ${(offer.selected) ? 'checked' : ''}>
+        <label class="event__offer-label" for="event-offer-${offer.id}">
+          <span class="event__offer-title">${offer.title}</span>
+          &plus;&euro;&nbsp;
+          <span class="event__offer-price">${offer.price}</span>
+        </label>
+      </div>`).join('')}
+    </div>`}
+  </section>`
+);
 
 function createEditPointTemplate(point) {
-  const {type, destination, dateFrom, dateTo, basePrice, offers} = point;
-
-  const createOfferButton = () =>(
-    `<div class="event__available-offers">
-    <div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked>
-      <label class="event__offer-label" for="event-offer-luggage-1">
-        <span class="event__offer-title">${offers.offers[0].title}</span>
-        &plus;&euro;&nbsp;
-         <span class="event__offer-price">${offers.offers[0].price}</span>
-      </label>
-    </div>`
-  );
+  const {type, destination, dateFrom, dateTo, basePrice, offer} = point;
 
   return `<li class="trip-events__item">
   <form class="event event--edit" action="#" method="post">
@@ -116,7 +120,7 @@ function createEditPointTemplate(point) {
   <section class="event__details">
     <section class="event__section  event__section--offers">
       <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-      ${createOfferButton(offers)}
+      ${createEventOffers(offer)}
     </section>
 
     <section class="event__section  event__section--destination">
