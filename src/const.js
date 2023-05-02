@@ -1,7 +1,7 @@
 import {getRandomInteger} from './util.js';
 const POINT_TYPES = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'];
 const OFFER_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
-const CITY = ['Denver', 'Stockholm', 'Rio', 'Berlin', 'Tokyo', 'Nairobi', 'Lisboa', 'Moscow'];
+const CITIES = ['Denver', 'Stockholm', 'Rio', 'Berlin', 'Tokyo', 'Nairobi', 'Lisboa', 'Moscow','Manila', 'Pamplona'];
 
 
 const OFFERS = {
@@ -9,31 +9,43 @@ const OFFERS = {
     {
       'id' : 1,
       'title': 'Switch to comfort',
-      'price': getRandomInteger(0, 100),
+      'price': getRandomInteger(10, 100),
       'selected' : Boolean(getRandomInteger(0, 1)),
     }, {
       'id' : 2,
       'title': 'Choose the radio station',
-      'price': getRandomInteger(0, 100),
+      'price': getRandomInteger(10, 100),
       'selected' : Boolean(getRandomInteger(0, 1))
     }
   ],
-  'check-in': [],
+  'check-in': [
+    {'id' : 1,
+      'title': 'Add breakfast',
+      'price': getRandomInteger(50, 100),
+      'selected' : Boolean(getRandomInteger(0, 1))
+    },
+    {
+      'id' : 1,
+      'title': 'Lunch in city',
+      'price': getRandomInteger(50, 100),
+      'selected' : Boolean(getRandomInteger(0, 1))
+    }
+  ],
   'train': [
     {
       'id' : 1,
       'title': 'Switch to comfort',
-      'price': getRandomInteger(0, 100),
+      'price': getRandomInteger(10, 100),
       'selected' : Boolean(getRandomInteger(0, 1))
     }, {
       'id' : 2,
       'title': 'Add meal',
-      'price': getRandomInteger(0, 100),
+      'price': getRandomInteger(10, 100),
       'selected' : Boolean(getRandomInteger(0, 1))
     }, {
       'id' : 3,
       'title': 'Choose seats',
-      'price': getRandomInteger(0, 100),
+      'price': getRandomInteger(10, 100),
       'selected' : Boolean(getRandomInteger(0, 1))
     }
   ],
@@ -41,7 +53,7 @@ const OFFERS = {
     {
       'id' : 1,
       'title': 'Travel by train',
-      'price': getRandomInteger(0, 100),
+      'price': getRandomInteger(10, 100),
       'selected' : Boolean(getRandomInteger(0, 1))
     }
   ],
@@ -49,17 +61,17 @@ const OFFERS = {
     {
       'id' : 1,
       'title': 'Choose seats',
-      'price': getRandomInteger(0, 100),
+      'price': getRandomInteger(10, 100),
       'selected' : Boolean(getRandomInteger(0, 1))
     }, {
       'id' : 2,
       'title': 'Choose the radio station',
-      'price': getRandomInteger(0, 100),
+      'price': getRandomInteger(10, 100),
       'selected' : Boolean(getRandomInteger(0, 1))
     }, {
       'id' : 3,
       'title': 'Switch to comfort',
-      'price': getRandomInteger(0, 100),
+      'price': getRandomInteger(10, 100),
       'selected' : Boolean(getRandomInteger(0, 1))
     }
   ],
@@ -67,22 +79,28 @@ const OFFERS = {
     {
       'id' : 1,
       'title': 'Switch to comfort',
-      'price': getRandomInteger(0, 100),
+      'price': getRandomInteger(10, 100),
       'selected' : Boolean(getRandomInteger(0, 1))
     }, {
       'id' : 2,
       'title': 'Add meal',
-      'price': getRandomInteger(0, 100),
+      'price': getRandomInteger(10, 100),
       'selected' : Boolean(getRandomInteger(0, 1))
     }, {
       'id' : 3,
       'title': 'Choose seats',
-      'price': getRandomInteger(0, 100),
+      'price': getRandomInteger(10, 100),
       'selected' : Boolean(getRandomInteger(0, 1))
     }, {
       'id' : 4,
       'title': 'Add luggage',
-      'price': getRandomInteger(0, 100),
+      'price': getRandomInteger(10, 100),
+      'selected' : Boolean(getRandomInteger(0, 1))
+    },
+    {
+      'id' : 5,
+      'title': 'Book tickets',
+      'price': getRandomInteger(10, 100),
       'selected' : Boolean(getRandomInteger(0, 1))
     }
   ],
@@ -90,12 +108,12 @@ const OFFERS = {
     {
       'id' : 1,
       'title': 'Switch to comfort',
-      'price': getRandomInteger(0, 100),
+      'price': getRandomInteger(10, 100),
       'selected' : Boolean(getRandomInteger(0, 1))
     }, {
       'id' : 2,
       'title': 'Add meal',
-      'price': getRandomInteger(0, 100),
+      'price': getRandomInteger(10, 100),
       'selected' : Boolean(getRandomInteger(0, 1))
     }
   ],
@@ -103,7 +121,7 @@ const OFFERS = {
     {
       'id' : 1,
       'title': 'Add meal',
-      'price': getRandomInteger(0, 100),
+      'price': getRandomInteger(10, 100),
       'selected' : Boolean(getRandomInteger(0, 1))
     }
   ],
@@ -111,9 +129,9 @@ const OFFERS = {
     {
       'id' : 1,
       'title': 'Choose seats',
-      'price': getRandomInteger(0, 100),
+      'price': getRandomInteger(10, 100),
       'selected' : Boolean(getRandomInteger(0, 1))
     }
   ],
 };
-export {POINT_TYPES, CITY, OFFER_TYPES, OFFERS};
+export {POINT_TYPES, CITIES, OFFER_TYPES, OFFERS};

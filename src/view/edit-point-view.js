@@ -1,22 +1,23 @@
 import {createElement} from '../render.js';
 import dayjs from 'dayjs';
 
-const createEventOffers = (offers) => (`<section class="event__section  event__section--offers">
-  ${(offers.length === 0) ? '' : `
-    
+function createEventOffers(offers) {
+  return(
+    `<section class="event__section  event__section--offers">
+  ${(offers.length !== null ? `
+
     <div class="event__available-offers">
       ${offers.map((offer) => `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer" type="checkbox" name="event-offer-${offer.id}"
-        ${(offer.selected) ? 'checked' : ''}>
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer" type="checkbox" name="event-offer-${offer.id}"${(offer.selected) ? 'checked' : ''}>
         <label class="event__offer-label" for="event-offer-${offer.id}">
           <span class="event__offer-title">${offer.title}</span>
           &plus;&euro;&nbsp;
           <span class="event__offer-price">${offer.price}</span>
         </label>
       </div>`).join('')}
-    </div>`}
-  </section>`
-);
+    </div>` : '')}
+  </section>`);
+}
 
 function createEditPointTemplate(point) {
   const {type, destination, dateFrom, dateTo, basePrice, offer} = point;

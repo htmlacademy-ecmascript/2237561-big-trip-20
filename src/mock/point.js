@@ -1,5 +1,5 @@
 import {getRandomArrayElement, getRandomInteger} from '../util.js';
-import {POINT_TYPES, CITY, OFFER_TYPES, OFFERS} from '../const.js';
+import {POINT_TYPES, CITIES, OFFER_TYPES, OFFERS} from '../const.js';
 
 const destinationDescription = [
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
@@ -10,10 +10,10 @@ const destinationDescription = [
 ];
 const destination = {
   description: getRandomArrayElement(destinationDescription),
-  name: getRandomArrayElement(CITY),
+  name: getRandomArrayElement(CITIES),
   pictures: [
     {
-      src: `https://loremflickr.com/248/152?random=${getRandomInteger(0,5)}`,
+      src: `https://loremflickr.com/248/152?${getRandomInteger(0,5)}`,
       description: getRandomArrayElement(destinationDescription)
     }
   ]
