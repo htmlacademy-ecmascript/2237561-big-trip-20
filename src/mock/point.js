@@ -19,7 +19,7 @@ const destination = {
   ]
 };
 
-const typePoint = OFFER_TYPES[getRandomInteger(1, OFFER_TYPES.length)];
+const typePoint = OFFER_TYPES[getRandomInteger(0, OFFER_TYPES.length - 1)];
 
 const mockPoint = [
   {
