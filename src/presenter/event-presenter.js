@@ -19,11 +19,7 @@ export default class EventPresenter {
   init() {
     this.#eventPoints = [...this.#pointsModel.points];
 
-    render(this.#eventListComponent, this.#eventContainer);
-
-    for (let i = 0; i < this.#eventPoints.length; i++) {
-      this.#renderPoint(this.#eventPoints[i]);
-    }
+    this.#renderEventList();
   }
 
   #renderPoint(point) {
@@ -62,5 +58,13 @@ export default class EventPresenter {
     }
 
     render(pointComponent, this.#eventListComponent.element);
+  }
+
+  #renderEventList(){
+    render(this.#eventListComponent, this.#eventContainer);
+
+    for (let i = 0; i < this.#eventPoints.length; i++) {
+      this.#renderPoint(this.#eventPoints[i]);
+    }
   }
 }
