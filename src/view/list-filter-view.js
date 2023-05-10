@@ -27,7 +27,7 @@ function createListFilterTemplate() {
 }
 
 export default class ListFilterView extends AbstractView {
-  get Template() {
+  get template() {
     return createListFilterTemplate();
   }
 }

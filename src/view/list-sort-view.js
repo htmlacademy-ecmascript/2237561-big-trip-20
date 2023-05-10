@@ -30,7 +30,7 @@ function createListSortTemplate() {
 }
 
 export default class ListSortView extends AbstractView {
-  get Template() {
+  get template() {
     return createListSortTemplate();
   }
 }

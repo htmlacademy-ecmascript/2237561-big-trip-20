@@ -6,7 +6,7 @@ function createListEmptyTemplate() {
 }
 
 export default class ListEmptyView extends AbstractView {
-  get Template() {
+  get template() {
     return createListEmptyTemplate();
   }
 }

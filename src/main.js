@@ -3,7 +3,7 @@ import ListSortView from './view/list-sort-view.js';
 import TripMainInfoView from './view/header-main-info-view.js';
 import EventPresenter from './presenter/event-presenter.js';
 import PointsModel from './model/points-model.js';
-import {render, RenderPosition} from './render.js';
+import {render, RenderPosition} from './framework/render.js';
 
 const tripMainInfoElement = document.querySelector('.trip-main');
 const tripEventsElement = document.querySelector('.trip-events');

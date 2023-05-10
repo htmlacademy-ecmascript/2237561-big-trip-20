@@ -61,7 +61,7 @@ export default class TripPointView extends AbstractView {
     this.point = point;
   }
 
-  get Template() {
+  get template() {
     return createTripPointTemplate(this.point);
   }
 }
