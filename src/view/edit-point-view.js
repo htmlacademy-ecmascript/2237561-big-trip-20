@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import dayjs from 'dayjs';
 
 function createEventOffers(offers) {
@@ -144,26 +144,13 @@ function createEditPointTemplate(point) {
 </li>`;
 }
 
-export default class EditPointView {
+export default class EditPointView extends AbstractView {
   constructor({point}){
+    super();
     this.point = point;
   }
 
-  getTemplate() {
+  get Template() {
     return createEditPointTemplate(this.point);
   }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
 }
-
-export {EditPointView};

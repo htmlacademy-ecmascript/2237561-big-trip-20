@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import {humanizePointDate, getPointDuration} from '../util.js';
 
 function createTripPointTemplate(point) {
@@ -55,26 +55,13 @@ function createTripPointTemplate(point) {
 </li>`;
 }
 
-export default class TripPointView {
+export default class TripPointView extends AbstractView {
   constructor({point}){
+    super();
     this.point = point;
   }
 
-  getTemplate() {
+  get Template() {
     return createTripPointTemplate(this.point);
   }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
 }
-
-export {TripPointView};
