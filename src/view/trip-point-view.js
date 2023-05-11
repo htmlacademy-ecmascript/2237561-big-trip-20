@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import {humanizePointDate, getPointDuration} from '../util.js';
 
 function createTripPointTemplate(point) {
@@ -55,26 +55,24 @@ function createTripPointTemplate(point) {
 </li>`;
 }
 
-export default class TripPointView {
-  constructor({point}){
-    this.point = point;
+export default class TripPointView extends AbstractView {
+  #point = null;
+  #handleEditPointClick = null;
+
+  constructor({point, onEditPointClick}){
+    super();
+    this.#point = point;
+    this.#handleEditPointClick = onEditPointClick;
+
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editPointClickHandler);
   }
 
-  getTemplate() {
-    return createTripPointTemplate(this.point);
+  get template() {
+    return createTripPointTemplate(this.#point);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
+  #editPointClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleEditPointClick();
+  };
 }
-
-export {TripPointView};

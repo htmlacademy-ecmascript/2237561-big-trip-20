@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import dayjs from 'dayjs';
 
 function createEventOffers(offers) {
@@ -144,26 +144,35 @@ function createEditPointTemplate(point) {
 </li>`;
 }
 
-export default class EditPointView {
-  constructor({point}){
-    this.point = point;
+export default class EditPointView extends AbstractView {
+  #point = null;
+  #handleFormSubmit = null;
+  #handleCloseFormClick = null;
+
+  constructor({point, onFormSubmit, onCloseClick}){
+    super();
+    this.#point = point;
+    this.#handleFormSubmit = onFormSubmit;
+    this.#handleCloseFormClick = onCloseClick;
+
+    this.element.querySelector('.event__save-btn')
+      .addEventListener('submit', this.#formSubmitHandler);
+
+    this.element.querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#closeClickHandler);
   }
 
-  getTemplate() {
-    return createEditPointTemplate(this.point);
+  get template() {
+    return createEditPointTemplate(this.#point);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
 
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
+  #closeClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleCloseFormClick();
+  };
 }
-
-export {EditPointView};
