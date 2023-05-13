@@ -162,4 +162,11 @@ const OFFERS = {
     }
   ],
 };
-export {CITIES, OFFER_TYPES, OFFERS, Duration, TripPrice, OfferPrice};
+const FilterType = {
+  EVERYTHING: 'Everything',
+  FUTURE: 'future',
+  PRESENT: 'present',
+  PAST: 'past',
+};
+
+export {CITIES, OFFER_TYPES, OFFERS, Duration, TripPrice, OfferPrice, FilterType};
