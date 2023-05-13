@@ -40,4 +40,13 @@ function getPointDuration(dateFrom, dateTo) {
   return pointDuration;
 }
 
-export {humanizePointDate, getPointDuration};
+function isPointFuture (point){
+  return dayjs().isBefore(point.dateFrom);
+}
+function isPointPresent (point){
+  return (dayjs().isAfter(point.dateFrom) && dayjs().isBefore(point.dateTo));
+}
+function isPointPast (point){
+  return dayjs().isAfter(point.dateTo);
+}
+export {humanizePointDate, getPointDuration, isPointFuture, isPointPresent, isPointPast};
