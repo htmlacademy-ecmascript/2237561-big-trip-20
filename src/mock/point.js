@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import {getRandomArrayElement, getRandomInteger} from '../util.js';
+import {getRandomArrayElement, getRandomInteger} from '../utils/common.js';
 import {CITIES, OFFER_TYPES, OFFERS, TripPrice, Duration} from '../const.js';
 
 const destinationDescription = [
