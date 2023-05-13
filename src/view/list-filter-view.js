@@ -7,7 +7,7 @@ function createFilterItemTemplate(filter) {
   class="trip-filters__filter-input  visually-hidden"
   type="radio"
   name="trip-filter"
-  value="${type}"${hasPoints} ? '' : 'dasabled'>
+  value="${type}"${hasPoints} ? '' : 'disabled'>
   <label class="trip-filters__filter-label" for="filter-${type}">${type}</label>
 </div>`);
 }
@@ -24,8 +24,7 @@ function createListFilterTemplate(filterItems) {
 
 export default class ListFilterView extends AbstractView {
   #filters = null;
-
-  constructor({filters}) {
+  constructor({filters}){
     super();
     this.#filters = filters;
   }
