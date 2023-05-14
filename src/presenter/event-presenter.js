@@ -2,6 +2,7 @@ import {render, replace} from '../framework/render.js';
 import EventListView from '../view/list-view.js';
 import TripPointView from '../view/trip-point-view.js';
 import EditPointView from '../view/edit-point-view.js';
+import ListEmptyView from '../view/edit-point-view.js';
 
 export default class EventPresenter {
   #eventContainer = null;
@@ -64,6 +65,9 @@ export default class EventPresenter {
     render(this.#eventListComponent, this.#eventContainer);
 
     for (let i = 0; i < this.#eventPoints.length; i++) {
+      if(this.#eventPoints.length === 0){
+        render(new ListEmptyView(), this.#eventContainer.element);
+      }
       this.#renderPoint(this.#eventPoints[i]);
     }
   }

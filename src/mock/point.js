@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import {getRandomArrayElement, getRandomInteger} from '../util.js';
+import {getRandomArrayElement, getRandomInteger} from '../utils/common.js';
 import {CITIES, OFFER_TYPES, OFFERS, TripPrice, Duration} from '../const.js';
 
 const destinationDescription = [
@@ -9,16 +9,16 @@ const destinationDescription = [
   'O bella ciao, bella ciao, bella ciao ciao ciao',
   'E dirà oh che bel fior',
 ];
-const destination = {
+const generateDestination = () => ({
   description: getRandomArrayElement(destinationDescription),
-  name: getRandomArrayElement(CITIES),
+  name: CITIES[getRandomInteger(0, CITIES.length - 1)],
   pictures: [
     {
       src: `https://loremflickr.com/248/152?${getRandomInteger(0,5)}`,
       description: getRandomArrayElement(destinationDescription)
     }
   ]
-};
+});
 
 let date = dayjs().subtract(getRandomInteger(0, Duration.DAY), 'day').toDate();
 
@@ -32,22 +32,18 @@ function getDate({next}){
   return date;
 }
 
-const typePoint = OFFER_TYPES[getRandomInteger(0, OFFER_TYPES.length - 1)];
-
-const mockPoint = [
-  {
+const generateMockPoint = () => {
+  const typePoint = OFFER_TYPES[getRandomInteger(0, OFFER_TYPES.length - 1)];
+  return {
     id: getRandomInteger(1,9),
     basePrice: getRandomInteger(TripPrice.MIN, TripPrice.MAX),
     dateFrom: getDate({next: true}),
     dateTo: getDate({next: true}),
-    destination: destination,
+    destination: generateDestination(),
     isFavorite: !!getRandomInteger(0,1),
     type: typePoint,
     offer: OFFERS[typePoint],
-  }
-];
-function getRandomPoint(){
-  return getRandomArrayElement(mockPoint);
-}
+  };
+};
 
-export {getRandomPoint};
+export {generateMockPoint};
