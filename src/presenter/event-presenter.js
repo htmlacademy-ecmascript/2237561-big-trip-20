@@ -12,6 +12,7 @@ export default class EventPresenter {
   #sortComponent = new ListSortView();
 
   #eventPoints = [];
+  #pointPresenters = new Map();
 
   constructor({eventContainer, pointsModel}) {
     this.#eventContainer = eventContainer;
@@ -33,6 +34,12 @@ export default class EventPresenter {
       pointListContainer: this.#eventListComponent.element,
     });
     pointPresenter.init(point);
+    this.#pointPresenters.set(point.id, pointPresenter);
+  }
+
+  #clearTaskList() {
+    this.#pointPresenters.forEach((presenter) => presenter.destroy());
+    this.#pointPresenters.clear();
   }
 
   #renderEventList(){
