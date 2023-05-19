@@ -1,4 +1,5 @@
 import {render, RenderPosition} from '../framework/render.js';
+import {updateItem} from '../utils/common.js';
 import EventListView from '../view/list-view.js';
 import ListEmptyView from '../view/edit-point-view.js';
 import ListSortView from '../view/list-sort-view.js';
@@ -25,6 +26,11 @@ export default class EventPresenter {
     this.#renderEventList();
   }
 
+  #handlePointChange = (updatedPoit) => {
+    this.#eventPoints = updateItem(this.#eventPoints, updatedPoit);
+    this.#pointPresenters.get(updatedPoit.id).init(updatedPoit);
+  };
+
   #renderSort() {
     render(this.#sortComponent, this.#eventListComponent.element, RenderPosition.AFTERBEGIN);
   }
@@ -32,12 +38,13 @@ export default class EventPresenter {
   #renderPoint(point) {
     const pointPresenter = new PointPresenter({
       pointListContainer: this.#eventListComponent.element,
+      onDataChange: this.#handlePointChange,
     });
     pointPresenter.init(point);
     this.#pointPresenters.set(point.id, pointPresenter);
   }
 
-  #clearTaskList() {
+  #clearPointList() {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
   }

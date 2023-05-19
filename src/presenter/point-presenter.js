@@ -5,14 +5,16 @@ import EditPointView from '../view/edit-point-view.js';
 
 export default class PointPresenter {
   #pointListContainer = null;
+  #handleDataChange = null;
 
   #pointComponent = null;
   #pointEditComponent = null;
 
   #point = null;
 
-  constructor({pointListContainer}) {
+  constructor({pointListContainer, onDataChange}) {
     this.#pointListContainer = pointListContainer;
+    this.#handleDataChange = onDataChange;
   }
 
   init(point) {
@@ -24,12 +26,13 @@ export default class PointPresenter {
     this.#pointComponent = new TripPointView({
       point: this.#point,
       onEditPointClick: this.#handleEditPointClick,
+      onFavoriteClick: this.#handleFavoriteClick,
     });
 
     this.#pointEditComponent = new EditPointView({
       point: this.#point,
       onFormSubmit: this.#handleFormSubmit,
-      onCloseClick: this.#handleFormSubmit, //подумать над названием
+      onCloseClick: this.#handleCloseEditClick,
     });
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
@@ -77,7 +80,16 @@ export default class PointPresenter {
     this.#replaceCardToForm();
   };
 
-  #handleFormSubmit = () => {
+  #handleCloseEditClick = () => {
+    this.#replaceFormToCard();
+  };
+
+  #handleFavoriteClick = () => {
+    this.#handleDataChange({...this.#point, isFavorite: !this.#point.isFavorite});
+  };
+
+  #handleFormSubmit = (point) => {
+    this.#handleDataChange(point);
     this.#replaceFormToCard();
   };
 }
