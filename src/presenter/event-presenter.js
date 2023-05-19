@@ -26,6 +26,10 @@ export default class EventPresenter {
     this.#renderEventList();
   }
 
+  #handleModeChange = () => {
+    this.#pointPresenters.forEach((presenter) => presenter.resetView());
+  };
+
   #handlePointChange = (updatedPoit) => {
     this.#eventPoints = updateItem(this.#eventPoints, updatedPoit);
     this.#pointPresenters.get(updatedPoit.id).init(updatedPoit);
@@ -39,6 +43,7 @@ export default class EventPresenter {
     const pointPresenter = new PointPresenter({
       pointListContainer: this.#eventListComponent.element,
       onDataChange: this.#handlePointChange,
+      onModeChange: this.#handleModeChange,
     });
     pointPresenter.init(point);
     this.#pointPresenters.set(point.id, pointPresenter);
