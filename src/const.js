@@ -1,12 +1,18 @@
 import {getRandomInteger} from './utils/common.js';
-
-const OFFER_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
-const CITIES = ['Denver', 'Stockholm', 'Rio', 'Berlin', 'Tokyo', 'Nairobi', 'Lisboa', 'Moscow','Manila', 'Pamplona', 'Palermo'];
-
 const Mode = {
   DEFAULT: 'DEFAULT',
   EDITING: 'EDITING',
 };
+const SortType = {
+  DAY: 'default',
+  TIME: 'time',
+  PRICE: 'price',
+  EVENT: 'event',
+  OFFERS: 'offers',
+};
+
+const OFFER_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
+const CITIES = ['Denver', 'Stockholm', 'Rio', 'Berlin', 'Tokyo', 'Nairobi', 'Lisboa', 'Moscow','Manila', 'Pamplona', 'Palermo'];
 
 const Duration = {
   DAY: 28,
@@ -174,4 +180,4 @@ const FilterType = {
   PAST: 'past',
 };
 
-export {CITIES, OFFER_TYPES, OFFERS, Duration, TripPrice, OfferPrice, FilterType, Mode};
+export {CITIES, OFFER_TYPES, OFFERS, Duration, TripPrice, OfferPrice, FilterType, Mode, SortType};
