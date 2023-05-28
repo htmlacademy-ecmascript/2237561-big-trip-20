@@ -7,17 +7,7 @@ dayjs.extend(duration);
 
 const MSEC_IN_HOUR = 3600000;
 const MSEC_IN_DAY = 86400000;
-/*
-const getRandomInteger = (a = 0, b = 1) => {
-  const lower = Math.ceil(Math.min(a, b));
-  const upper = Math.floor(Math.max(a, b));
 
-  return Math.floor(lower + Math.random() * (upper - lower + 1));
-};
-
-function getRandomArrayElement(items) {
-  return items[Math.floor(Math.random() * items.length)];
-}*/
 const humanizePointDate = (date, format) => dayjs(date).format(format);
 
 function getPointDuration(dateFrom, dateTo) {
