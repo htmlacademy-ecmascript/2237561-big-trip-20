@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import {nanoid} from 'nanoid';
 import {getRandomArrayElement, getRandomInteger} from '../utils/common.js';
-import {CITIES, OFFER_TYPES, OFFERS, TripPrice, Duration} from '../const.js';
+import {CITIES, TYPES, OFFERS, TripPrice, Duration} from '../const.js';
 
 const destinationDescription = [
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
@@ -34,7 +34,7 @@ function getDate({next}){
 }
 
 const generateMockPoint = () => {
-  const typePoint = OFFER_TYPES[getRandomInteger(0, OFFER_TYPES.length - 1)];
+  const typePoint = TYPES[getRandomInteger(0, TYPES.length - 1)];
   return {
     id: nanoid(),
     basePrice: getRandomInteger(TripPrice.MIN, TripPrice.MAX),

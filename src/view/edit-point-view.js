@@ -1,5 +1,6 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import dayjs from 'dayjs';
+import {OFFERS} from '../const.js';
 
 function createEventOffers(offers) {
   return(
@@ -8,7 +9,7 @@ function createEventOffers(offers) {
 
     <div class="event__available-offers">
       ${offers.map((offer) => `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer" type="checkbox" name="event-offer-${offer.id}"${(offer.selected) ? 'checked' : ''}>
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.id}" data-offer-id="${offer.id}" type="checkbox" name="event-offer-${offer.id}">
         <label class="event__offer-label" for="event-offer-${offer.id}">
           <span class="event__offer-title">${offer.title}</span>
           &plus;&euro;&nbsp;
@@ -62,7 +63,7 @@ function createEditPointTemplate(point) {
           </div>
 
           <div class="event__type-item">
-            <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" checked>
+            <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight">
             <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
           </div>
 
@@ -172,6 +173,11 @@ export default class EditPointView extends AbstractStatefulView {
     this.element.querySelector('.event__save-btn').addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
     this.element.querySelector('.event__type-group').addEventListener('change', this.#typeChangeHandler);
+
+    const offerBlock = this.element.querySelector('.event__available-offers');
+    if (offerBlock){
+      offerBlock.addEventListener('change', this.#editOffersHandler);
+    }
     //this.element.querySelector('.event__input--destination').addEventListener('change', this.# Handler);
   }
 
@@ -189,7 +195,18 @@ export default class EditPointView extends AbstractStatefulView {
     evt.preventDefault();
     this.updateElement({
       type: evt.target.value,
-      offer: []
+      offer: OFFERS[evt.target.value]
+    });
+  };
+
+  #editOffersHandler = (evt) => {
+    evt.preventDefault();
+    const checkedBoxes = Array.from(this.element.querySelectorAll('.event__offer-checkbox:checked'));
+    this._setState({
+      point: {
+        ...this._state.point,
+        offer: checkedBoxes.map((element) => element.dataset.offerId)
+      }
     });
   };
 
