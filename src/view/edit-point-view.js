@@ -21,10 +21,11 @@ function createEventOffers(offers) {
   </section>`);
 }
 
-const cities = CITIES.map((city) => (`
+function createCitiesTemplate(cities) {
+  return cities.map((city) => (`
 <option value="${city}" ${city === name ? 'selected' : ''}></option>
 `)).join('');
-
+}
 function createEditPointTemplate(point) {
   const {type, destination, dateFrom, dateTo, basePrice, offer} = point;
   //let cities = Object.values(destinations).map((destination) => destination.name);
@@ -98,7 +99,7 @@ function createEditPointTemplate(point) {
       </label>
       <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
       <datalist id="destination-list-1">
-        ${cities}
+        ${createCitiesTemplate(CITIES)}
       </datalist>
     </div>
 
@@ -206,8 +207,12 @@ export default class EditPointView extends AbstractStatefulView {
 
   #destinationInputHandler = (evt) => {
     evt.preventDefault();
+    const eventDestinationInput = evt.target.closest('input[name="event-destination"]');
     this.updateElement({
-      destination: generateDestination(),
+      destination: {
+        ...generateDestination(0),
+        name: eventDestinationInput.value,
+      },
     });
   };
 
