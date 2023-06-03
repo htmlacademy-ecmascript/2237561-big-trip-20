@@ -5,7 +5,7 @@ const createOffersTemplate = (offers) => {
   let offersTemplate = '';
   if (offers) {
     offers.forEach((offer) => {
-      if (offer.isSelected) {
+      if (offer) { //вернуть isSelected после
         offersTemplate += `<li className="event__offer">
         <span className="event__offer-title">${offer.title}</span>
         &plus;&euro;&nbsp;
