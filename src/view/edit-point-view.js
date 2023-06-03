@@ -1,6 +1,7 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import dayjs from 'dayjs';
-import {OFFERS} from '../const.js';
+import {OFFERS, CITIES} from '../const.js';
+import {generateDestination} from '../mock/point.js';
 
 function createEventOffers(offers) {
   return(
@@ -20,8 +21,14 @@ function createEventOffers(offers) {
   </section>`);
 }
 
+const cities = CITIES.map((city) => (`
+<option value="${city}" ${city === name ? 'selected' : ''}></option>
+`)).join('');
+
 function createEditPointTemplate(point) {
   const {type, destination, dateFrom, dateTo, basePrice, offer} = point;
+  //let cities = Object.values(destinations).map((destination) => destination.name);
+
 
   return `<li class="trip-events__item">
   <form class="event event--edit" action="#" method="post">
@@ -91,9 +98,7 @@ function createEditPointTemplate(point) {
       </label>
       <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
       <datalist id="destination-list-1">
-        <option value="Amsterdam"></option>
-        <option value="Geneva"></option>
-        <option value="Chamonix"></option>
+        ${cities}
       </datalist>
     </div>
 
@@ -178,7 +183,7 @@ export default class EditPointView extends AbstractStatefulView {
     if (offerBlock){
       offerBlock.addEventListener('change', this.#editOffersHandler);
     }
-    //this.element.querySelector('.event__input--destination').addEventListener('change', this.# Handler);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationInputHandler);
   }
 
   #formSubmitHandler = (evt) => {
@@ -196,6 +201,13 @@ export default class EditPointView extends AbstractStatefulView {
     this.updateElement({
       type: evt.target.value,
       offer: OFFERS[evt.target.value]
+    });
+  };
+
+  #destinationInputHandler = (evt) => {
+    evt.preventDefault();
+    this.updateElement({
+      destination: generateDestination(),
     });
   };
 

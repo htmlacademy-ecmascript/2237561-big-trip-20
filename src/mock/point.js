@@ -15,7 +15,7 @@ const generateDestination = () => ({
   name: CITIES[getRandomInteger(0, CITIES.length - 1)],
   pictures: [
     {
-      src: `https://loremflickr.com/248/152?${getRandomInteger(0,5)}`,
+      src: `https://loremflickr.com/248/152?${getRandomInteger(0,100)}`,
       description: getRandomArrayElement(destinationDescription)
     }
   ]
@@ -47,4 +47,4 @@ const generateMockPoint = () => {
   };
 };
 
-export {generateMockPoint};
+export {generateMockPoint, generateDestination};
