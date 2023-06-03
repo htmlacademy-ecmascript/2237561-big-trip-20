@@ -29,6 +29,7 @@ function createCitiesTemplate(cities) {
 
 function createEditPointTemplate(point) {
   const {type, destination, dateFrom, dateTo, basePrice, offer, id} = point;
+  let destinationPhotoes = '';
 
   const eventTypeTemplate = TYPES.map((eventType) =>
     `<div class="event__type-item">
@@ -36,6 +37,25 @@ function createEditPointTemplate(point) {
       <label class="event__type-label  event__type-label--${eventType}" for="event-type-${eventType}-${id}">${eventType[0].toUpperCase() + eventType.slice(1)}</label>
     </div>`
   ).join('');
+
+  if (destination.description){
+    destinationPhotoes = destination.pictures.map((picture) =>
+      `<img class="event__photo" src="${picture.src}" alt="Event photo">`
+    ).join('');
+
+    destinationPhotoes = `<div class="event__photos-container">
+        <div class="event__photos-tape">
+          ${destinationPhotoes}
+        </div>
+      </div>`;
+  }
+
+  const destinationPhotoesTemplate = `<section class="event__section  event__section--destination">
+      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+      <p class="event__destination-description">${destination.description}</p>
+      ${destinationPhotoes}
+    </section>`;
+
 
   return `<li class="trip-events__item">
   <form class="event event--edit" action="#" method="post">
@@ -92,22 +112,7 @@ function createEditPointTemplate(point) {
       <h3 class="event__section-title  event__section-title--offers">Offers</h3>
       ${createEventOffers(offer)}
     </section>
-
-    <section class="event__section  event__section--destination">
-      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-      <p class="event__destination-description">
-      ${destination.description}
-      </p>
-      <div class="event__photos-container">
-          <div class="event__photos-tape">
-            <img class="event__photo" src="${destination.pictures[0].src}" alt="Event photo">
-            <img class="event__photo" src="${destination.pictures[0].src}" alt="Event photo">
-            <img class="event__photo" src="${destination.pictures[0].src}" alt="Event photo">
-            <img class="event__photo" src="${destination.pictures[0].src}" alt="Event photo">
-            <img class="event__photo" src="${destination.pictures[0].src}" alt="Event photo">
-          </div>
-      </div>
-    </section>
+    ${destinationPhotoesTemplate}
   </section>
 </form>
 </li>`;
