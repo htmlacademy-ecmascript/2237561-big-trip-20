@@ -3,7 +3,6 @@ import dayjs from 'dayjs';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import {OFFERS, CITIES, TYPES} from '../const.js';
-import {humanizePointDate} from '../utils/time.js';
 import {generateDestination} from '../mock/point.js';
 
 function createEventOffers(offers) {
@@ -123,7 +122,6 @@ function createEditPointTemplate(point) {
 
 export default class EditPointView extends AbstractStatefulView {
   #point = null;
-  #datepicker = null;
   #datepickerFrom = null;
   #datepickerTo = null;
   #handleFormSubmit = null;
