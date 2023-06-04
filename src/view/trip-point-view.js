@@ -1,6 +1,22 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import {humanizePointDate, getPointDuration} from '../utils/time.js';
 
+const createOffersTemplate = (offers) => {
+  let offersTemplate = '';
+  if (offers) {
+    offers.forEach((offer) => {
+      if (offer) { //вернуть isSelected после
+        offersTemplate += `<li className="event__offer">
+        <span className="event__offer-title">${offer.title}</span>
+        &plus;&euro;&nbsp;
+        <span className="event__offer-price">${offer.price}</span>
+         </li>`;
+      }
+    });
+  }
+  return offersTemplate;
+};
+
 function createTripPointTemplate(point) {
   const {basePrice, dateFrom, dateTo, destination, isFavorite, type, offer} = point;
 
@@ -11,6 +27,7 @@ function createTripPointTemplate(point) {
   const triptEndDate = humanizePointDate(dateTo, 'YYYY-MM-DDTHH:mm');
   const tripEndTime = humanizePointDate(dateTo, 'HH:mm');
   const tripDuration = getPointDuration(dateFrom, dateTo);
+  const offerTemplate = createOffersTemplate(offer);
 
   const isFavoritePoint = isFavorite
     ? 'event__favorite-btn--active'
@@ -36,11 +53,7 @@ function createTripPointTemplate(point) {
     </p>
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
-      <li class="event__offer">
-        <span class="event__offer-title">${offer[0].title ? offer[0].title : ''}</span>
-        &plus;&euro;&nbsp;
-        <span class="event__offer-price">${offer[0].price ? offer[0].price : ''}</span>
-      </li>
+    ${offerTemplate}
     </ul>
     <button class="event__favorite-btn  ${isFavoritePoint}" type="button">
       <span class="visually-hidden">Add to favorite</span>
