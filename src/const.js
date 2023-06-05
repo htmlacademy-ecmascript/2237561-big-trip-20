@@ -32,7 +32,6 @@ const OfferPrice = {
   MAX: 100
 };
 
-
 const OFFERS = {
   'taxi': [
     {
@@ -151,4 +150,17 @@ const FilterType = {
   PAST: 'past',
 };
 
-export {CITIES, TYPES, OFFERS, Duration, TripPrice, OfferPrice, FilterType, Mode, SortType};
+const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT'
+};
+
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR'
+};
+export {CITIES, TYPES, OFFERS, Duration, TripPrice, OfferPrice, FilterType, Mode, SortType, UserAction, UpdateType};
+
+
