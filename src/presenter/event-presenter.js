@@ -1,7 +1,8 @@
 import {render, RenderPosition} from '../framework/render.js';
 //import {updateItem} from '../utils/common.js';
-import {sortByTime, sortByPrice} from '../utils/sort.js';
+import {sortByDate, sortByTime, sortByPrice} from '../utils/sort.js';
 import {SortType, UserAction, UpdateType} from '../const.js';
+import {filter} from '../utils/filter.js';
 import EventListView from '../view/list-view.js';
 import ListEmptyView from '../view/edit-point-view.js';
 import ListSortView from '../view/list-sort-view.js';
@@ -10,6 +11,7 @@ import PointPresenter from './point-presenter';
 export default class EventPresenter {
   #eventContainer = null;
   #pointsModel = null;
+  #filterModel = null;
 
   #eventListComponent = new EventListView();
   #sortComponent = null;
@@ -19,25 +21,31 @@ export default class EventPresenter {
   #currentSortType = SortType.DAY;
   //#sourcedBoardPoints = [];
 
-  constructor({eventContainer, pointsModel}) {
+  constructor({eventContainer, pointsModel, filterModel}) {
     this.#eventContainer = eventContainer;
     this.#pointsModel = pointsModel;
+    this.#filterModel = filterModel;
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   get points() {
+    const filterType = this.#filterModel.filter;
+    const points = this.#pointsModel.points;
+    const filteredPoints = filter[filterType](points);
+
     switch (this.#currentSortType) {
       case SortType.TIME:
-        return [...this.#pointsModel.points].sort(sortByTime);
+        return [...filteredPoints].sort(sortByTime);
         //this.#eventPoints.sort(sortByTime);
         // break;
       case SortType.PRICE:
-        return [...this.#pointsModel.points].sort(sortByPrice);
+        return [...filteredPoints].sort(sortByPrice);
        // this.#eventPoints.sort(sortByPrice);
        // break;
     }
-    return this.#pointsModel.points;
+    return filteredPoints.sort(sortByDate);
   }
 
   init() {
