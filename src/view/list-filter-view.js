@@ -1,5 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 
+
 function createFilterItemTemplate(filter, currentFilterType) {
   const {type, hasPoints} = filter;
   return (`<div class="trip-filters__filter">
@@ -7,8 +8,11 @@ function createFilterItemTemplate(filter, currentFilterType) {
   class="trip-filters__filter-input  visually-hidden"
   type="radio"
   name="trip-filter"
-  value="${type === currentFilterType}"${hasPoints} ? '' : 'disabled'>
-  <label class="trip-filters__filter-label" for="filter-${type}">${type}</label>
+  value="${type}"
+  data-type="${type}"
+  ${hasPoints === 0 ? 'disabled' : ''}
+  ${type === currentFilterType ? 'checked' : ''}>
+  <label class="trip-filters__filter-label" for="filter-${type}" >${type}</label>
 </div>`);
 }
 
@@ -41,6 +45,6 @@ export default class ListFilterView extends AbstractView {
 
   #filterTypeChangeHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFilterTypeChange(evt.target.value);
+    this.#handleFilterTypeChange(evt.target.dataset.type);
   };
 }

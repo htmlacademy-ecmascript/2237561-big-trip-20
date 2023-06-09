@@ -1,10 +1,9 @@
 import {render, RenderPosition} from '../framework/render.js';
-//import {updateItem} from '../utils/common.js';
 import {sortByDate, sortByTime, sortByPrice} from '../utils/sort.js';
 import {SortType, UserAction, UpdateType} from '../const.js';
 import {filter} from '../utils/filter.js';
 import EventListView from '../view/list-view.js';
-import ListEmptyView from '../view/edit-point-view.js';
+//import ListEmptyView from '../view/edit-point-view.js';
 import ListSortView from '../view/list-sort-view.js';
 import PointPresenter from './point-presenter';
 
@@ -16,10 +15,8 @@ export default class EventPresenter {
   #eventListComponent = new EventListView();
   #sortComponent = null;
 
-  //#eventPoints = [];
   #pointPresenters = new Map();
   #currentSortType = SortType.DAY;
-  //#sourcedBoardPoints = [];
 
   constructor({eventContainer, pointsModel, filterModel}) {
     this.#eventContainer = eventContainer;
@@ -37,24 +34,15 @@ export default class EventPresenter {
 
     switch (this.#currentSortType) {
       case SortType.TIME:
-        return [...filteredPoints].sort(sortByTime);
-        //this.#eventPoints.sort(sortByTime);
-        // break;
+        return filteredPoints.sort(sortByTime);
       case SortType.PRICE:
-        return [...filteredPoints].sort(sortByPrice);
-       // this.#eventPoints.sort(sortByPrice);
-       // break;
+        return filteredPoints.sort(sortByPrice);
     }
     return filteredPoints.sort(sortByDate);
   }
 
   init() {
-    //this.#eventPoints = [...this.#pointsModel.points];
-
-    //this.#sourcedBoardPoints = [...this.#pointsModel.points];
-
     this.#renderEventList();
-
     this.#renderSort();
   }
 
@@ -86,8 +74,8 @@ export default class EventPresenter {
         this.#renderEventList();
         break;
       case UpdateType.MAJOR:
-        this.#renderEventList({resetSortType: true});
         this.#renderEventList();
+        this.#clearEventList();
         break;
     }
   };
@@ -103,36 +91,14 @@ export default class EventPresenter {
 
   }
 
-  /*#handlePointChange = (updatedPoint) => {
-    this.#eventPoints = updateItem(this.#eventPoints, updatedPoint);
-    this.#sourcedBoardPoints = updateItem(this.#sourcedBoardPoints, updatedPoint);
-    // Здесь будем вызывать обновление модели
-    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
-  };*/
-
-  /*#sortPoints(sortType) {
-    switch (sortType) {
-      case SortType.TIME:
-        this.#eventPoints.sort(sortByTime);
-        break;
-      case SortType.PRICE:
-        this.#eventPoints.sort(sortByPrice);
-        break;
-      default:
-        this.#eventPoints = [...this.#sourcedBoardPoints];
-    }
-    this.#currentSortType = sortType;
-  }*/
-
   #handleSortTypeChange = (sortType) => {
     if (this.#currentSortType === sortType) {
       return;
     }
 
-    //this.#sortPoints(sortType); // - Сортируем задачи
     this.#currentSortType = sortType;
-    this.#clearEventList(); // - Очищаем список
-    this.#renderEventList(); // - Рендерим список заново
+    this.#clearEventList();
+    this.#renderEventList();
   };
 
   #renderSort() {
@@ -153,19 +119,21 @@ export default class EventPresenter {
     this.#pointPresenters.set(point.id, pointPresenter);
   }
 
-  /*#clearPointList() {
-    this.#pointPresenters.forEach((presenter) => presenter.destroy());
-    this.#pointPresenters.clear();
-  }
-*/
+  #renderPoints = () => {
+    this.points.forEach((point) => this.#renderPoint(point));
+  };
+
   #renderEventList(){
+    //const points = this.point;
+    //const pointCount = points.length;
     render(this.#eventListComponent, this.#eventContainer);
-    //this.#renderSort();
-    for (let i = 0; i < this.points.length; i++) {
+
+    /*for (let i = 0; i < this.points.length; i++) {
       if(this.points.length === 0){
         render(new ListEmptyView(), this.#eventContainer.element);
       }
       this.#renderPoint(this.points[i]);
-    }
+    }*/
+    this.#renderPoints();
   }
 }

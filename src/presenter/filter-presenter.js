@@ -51,11 +51,11 @@ export default class FilterPresenter {
     this.init();
   };
 
-  #handleFilterTypeChange = (filterType) => {
-    if (this.#filterModel.filter === filterType) {
+  #handleFilterTypeChange = ({target}) => {
+    if (this.#filterModel.filter === target.dataset.type) {
       return;
     }
 
-    this.#filterModel.setFilter(UpdateType.MAJOR, filterType);
+    this.#filterModel.setFilter(UpdateType.MAJOR, target.dataset.type);
   };
 }
