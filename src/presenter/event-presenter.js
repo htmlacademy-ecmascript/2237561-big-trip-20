@@ -1,9 +1,8 @@
 import {render, RenderPosition} from '../framework/render.js';
 import {sortByDate, sortByTime, sortByPrice} from '../utils/sort.js';
-import {SortType, UserAction, UpdateType} from '../const.js';
+import {SortType, FilterType, UserAction, UpdateType} from '../const.js';
 import {filter} from '../utils/filter.js';
 import EventListView from '../view/list-view.js';
-//import ListEmptyView from '../view/edit-point-view.js';
 import ListSortView from '../view/list-sort-view.js';
 import PointPresenter from './point-presenter';
 
@@ -17,6 +16,7 @@ export default class EventPresenter {
 
   #pointPresenters = new Map();
   #currentSortType = SortType.DAY;
+  #filterType = FilterType.EVERYTHING;
 
   constructor({eventContainer, pointsModel, filterModel}) {
     this.#eventContainer = eventContainer;
@@ -28,9 +28,9 @@ export default class EventPresenter {
   }
 
   get points() {
-    const filterType = this.#filterModel.filter;
+    this.#filterType = this.#filterModel.filter;
     const points = this.#pointsModel.points;
-    const filteredPoints = filter[filterType](points);
+    const filteredPoints = filter[this.#filterType](points);
 
     switch (this.#currentSortType) {
       case SortType.TIME:
@@ -75,7 +75,7 @@ export default class EventPresenter {
         break;
       case UpdateType.MAJOR:
         this.#renderEventList();
-        this.#clearEventList();
+        this.#clearEventList({resetSortType: true});
         break;
     }
   };
@@ -86,7 +86,7 @@ export default class EventPresenter {
     this.#pointPresenters.clear();
 
     if (resetSortType) {
-      this.#currentSortType = SortType.DEFAULT;
+      this.#currentSortType = SortType.DAY;
     }
 
   }
@@ -124,16 +124,14 @@ export default class EventPresenter {
   };
 
   #renderEventList(){
-    //const points = this.point;
-    //const pointCount = points.length;
     render(this.#eventListComponent, this.#eventContainer);
-
+    this.#renderPoints();
     /*for (let i = 0; i < this.points.length; i++) {
       if(this.points.length === 0){
         render(new ListEmptyView(), this.#eventContainer.element);
       }
       this.#renderPoint(this.points[i]);
     }*/
-    this.#renderPoints();
+
   }
 }
