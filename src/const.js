@@ -161,6 +161,12 @@ const UpdateType = {
   MINOR: 'MINOR',
   MAJOR: 'MAJOR'
 };
-export {CITIES, TYPES, OFFERS, Duration, TripPrice, OfferPrice, FilterType, Mode, SortType, UserAction, UpdateType};
+
+const EditType = {
+  EDITING: 'EDITING',
+  CREATING: 'CREATING',
+};
+
+export {CITIES, TYPES, OFFERS, Duration, TripPrice, OfferPrice, FilterType, Mode, SortType, UserAction, UpdateType, EditType};
 
 

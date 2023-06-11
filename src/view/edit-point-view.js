@@ -2,8 +2,31 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import dayjs from 'dayjs';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
-import {OFFERS, CITIES, TYPES} from '../const.js';
+import {OFFERS, CITIES, TYPES, EditType} from '../const.js';
 import {generateDestination} from '../mock/point.js';
+
+const ButtonLabel = {
+  [EditType.EDITING]: 'Delete',
+  [EditType.CREATING]: 'Cancel',
+};
+
+function createDeleteButtonTemplate({type}){
+  return `<button class="event__reset-btn" type="reset">${ButtonLabel[type]}</button> `;
+}
+
+function createRollupButtonTemplate(){
+  return `<button class="event__rollup-btn" type="button">
+      <span class="visually-hidden">Open event</span>
+    </button>`;
+}
+
+function createEditControlsTemplate({type}){
+  return `<button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+${createDeleteButtonTemplate({type})}
+${(!type !== EditType.CREATING) ? createRollupButtonTemplate() : ''}
+  `;
+}
+
 
 function createEventOffers(offers) {
   return(
@@ -102,12 +125,7 @@ function createEditPointTemplate(point) {
       </label>
       <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value=" ">
     </div>
-
-    <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-    <button class="event__reset-btn" type="reset">Delete</button>
-    <button class="event__rollup-btn" type="button">
-      <span class="visually-hidden">Open event</span>
-    </button>
+  ${createEditControlsTemplate({type})}
   </header>
   <section class="event__details">
     <section class="event__section  event__section--offers">
@@ -127,19 +145,21 @@ export default class EditPointView extends AbstractStatefulView {
   #handleFormSubmit = null;
   #handleCloseFormClick = null;
   #handleDeleteClick = null;
+  #type;
 
-  constructor({point, onFormSubmit, onCloseClick, onDeleteClick}){
+  constructor({point, onFormSubmit, onCloseClick, onDeleteClick, type = EditType.EDITING}){
     super();
     this._setState(EditPointView.parsePointToState(point));
     this.#handleFormSubmit = onFormSubmit;
     this.#handleCloseFormClick = onCloseClick;
     this.#handleDeleteClick = onDeleteClick;
+    this.#type = type;
 
     this._restoreHandlers();
   }
 
   get template() {
-    return createEditPointTemplate(this._state);
+    return createEditPointTemplate(this._state, this.#type);
   }
 
   removeElement() {
@@ -163,10 +183,17 @@ export default class EditPointView extends AbstractStatefulView {
   }
 
   _restoreHandlers() {
+    if(this.#type === EditType.EDITING){
+      this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
+      this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
+    }
+    if(this.#type === EditType.CREATING){
+      this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
+    }
+
     this.element.querySelector('.event__save-btn').addEventListener('submit', this.#formSubmitHandler);
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
     this.element.querySelector('.event__type-group').addEventListener('change', this.#typeChangeHandler);
-    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
+
 
     const offerBlock = this.element.querySelector('.event__available-offers');
     if (offerBlock){

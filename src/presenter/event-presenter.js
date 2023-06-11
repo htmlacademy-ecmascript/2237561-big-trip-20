@@ -1,10 +1,12 @@
-import {render, RenderPosition} from '../framework/render.js';
+import {render, remove, RenderPosition} from '../framework/render.js';
 import {sortByDate, sortByTime, sortByPrice} from '../utils/sort.js';
 import {SortType, FilterType, UserAction, UpdateType} from '../const.js';
 import {filter} from '../utils/filter.js';
 import EventListView from '../view/list-view.js';
 import ListSortView from '../view/list-sort-view.js';
+import NoPointsView from '../view/no-points-view.js';
 import PointPresenter from './point-presenter';
+import NewEventPresenter from './new-event-presenter.js';
 
 export default class EventPresenter {
   #eventContainer = null;
@@ -13,15 +15,23 @@ export default class EventPresenter {
 
   #eventListComponent = new EventListView();
   #sortComponent = null;
+  #noPointComponent = null;
 
   #pointPresenters = new Map();
+  #newEventPresenter = null;
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
 
-  constructor({eventContainer, pointsModel, filterModel}) {
+  constructor({eventContainer, pointsModel, filterModel, onNewPointDestroy}) {
     this.#eventContainer = eventContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
+
+    this.#newEventPresenter = new NewEventPresenter({
+      eventContainer: this.#eventListComponent.element,
+      onDataChange: this.#handleViewAction,
+      onDestroy: onNewPointDestroy
+    });
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
@@ -46,7 +56,14 @@ export default class EventPresenter {
     this.#renderSort();
   }
 
+  createPoint() {
+    this.#currentSortType = SortType.DAY;
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this.#newEventPresenter.init();
+  }
+
   #handleModeChange = () => {
+    this.#newEventPresenter.destroy();
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
   };
 
@@ -81,9 +98,14 @@ export default class EventPresenter {
   };
 
   #clearEventList({resetSortType = false} = {}) {
+    this.#newEventPresenter.destroy();
 
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
+
+    if (this.#noPointComponent) {
+      remove(this.#noPointComponent);
+    }
 
     if (resetSortType) {
       this.#currentSortType = SortType.DAY;
@@ -124,14 +146,13 @@ export default class EventPresenter {
   };
 
   #renderEventList(){
+    if (this.points.length === 0) {
+      this.#noPointComponent = new NoPointsView(this.#filterType);
+      render(this.#noPointComponent, this.#eventContainer);
+      return;
+    }
+
     render(this.#eventListComponent, this.#eventContainer);
     this.#renderPoints();
-    /*for (let i = 0; i < this.points.length; i++) {
-      if(this.points.length === 0){
-        render(new ListEmptyView(), this.#eventContainer.element);
-      }
-      this.#renderPoint(this.points[i]);
-    }*/
-
   }
 }
