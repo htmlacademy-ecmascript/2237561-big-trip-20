@@ -149,7 +149,7 @@ export default class EventPresenter {
     if (this.points.length === 0) {
       this.#noPointComponent = new NoPointsView(this.#filterType);
       render(this.#noPointComponent, this.#eventContainer);
-      remove(this.#sortComponent);
+      //remove(this.#sortComponent); сортировка не возвращается после закрытия новой формы
       return;
     }
 
