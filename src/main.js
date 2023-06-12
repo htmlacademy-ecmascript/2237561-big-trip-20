@@ -40,7 +40,6 @@ function handleNewPointButtonClick () {
 
 render(new TripMainInfoView(), tripMainInfoElement, RenderPosition.AFTERBEGIN);
 render(newPointButtonComponent, tripMainInfoElement);
-newPointButtonComponent.setClickHandler(handleNewPointButtonClick);
 
 filterPresenter.init();
 eventPresenter.init();

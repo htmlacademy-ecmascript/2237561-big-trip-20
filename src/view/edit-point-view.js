@@ -23,7 +23,7 @@ function createRollupButtonTemplate(){
 function createEditControlsTemplate({type}){
   return `<button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
 ${createDeleteButtonTemplate({type})}
-${(!type !== EditType.CREATING) ? createRollupButtonTemplate() : ''}
+${(type !== EditType.CREATING) ? createRollupButtonTemplate() : ''}
   `;
 }
 
@@ -31,10 +31,10 @@ ${(!type !== EditType.CREATING) ? createRollupButtonTemplate() : ''}
 function createEventOffers(offers) {
   return(
     `<section class="event__section  event__section--offers">
-  ${(offers.length !== null ? `
+  ${(offers?.length !== null ? `
 
     <div class="event__available-offers">
-      ${offers.map((offer) => `<div class="event__offer-selector">
+      ${offers?.map((offer) => `<div class="event__offer-selector">
         <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.id}" data-offer-id="${offer.id}" type="checkbox" name="event-offer-${offer.id}">
         <label class="event__offer-label" for="event-offer-${offer.id}">
           <span class="event__offer-title">${offer.title}</span>
@@ -52,8 +52,9 @@ function createCitiesTemplate(cities) {
 `)).join('');
 }
 
-function createEditPointTemplate(point) {
+function createEditPointTemplate(point, buttonType) {
   const {type, destination, dateFrom, dateTo, basePrice, offer, id} = point;
+
   let destinationPhotoes = '';
 
   const eventTypeTemplate = TYPES.map((eventType) =>
@@ -63,7 +64,7 @@ function createEditPointTemplate(point) {
     </div>`
   ).join('');
 
-  if (destination.description){
+  if (destination?.description){
     destinationPhotoes = destination.pictures.map((picture) =>
       `<img class="event__photo" src="${picture.src}" alt="Event photo">`
     ).join('');
@@ -77,7 +78,7 @@ function createEditPointTemplate(point) {
 
   const destinationPhotoesTemplate = `<section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-      <p class="event__destination-description">${destination.description}</p>
+      <p class="event__destination-description">${destination?.description}</p>
       ${destinationPhotoes}
     </section>`;
 
@@ -104,7 +105,7 @@ function createEditPointTemplate(point) {
       <label class="event__label  event__type-output" for="event-destination-1">
       ${type}
       </label>
-      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
+      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination?.name}" list="destination-list-1">
       <datalist id="destination-list-1">
         ${createCitiesTemplate(CITIES)}
       </datalist>
@@ -125,7 +126,7 @@ function createEditPointTemplate(point) {
       </label>
       <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value=" ">
     </div>
-  ${createEditControlsTemplate({type})}
+  ${createEditControlsTemplate({type:buttonType})}
   </header>
   <section class="event__details">
     <section class="event__section  event__section--offers">

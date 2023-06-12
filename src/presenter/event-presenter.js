@@ -21,6 +21,7 @@ export default class EventPresenter {
   #newEventPresenter = null;
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
+  #isCreating = false;
 
   constructor({eventContainer, pointsModel, filterModel, onNewPointDestroy}) {
     this.#eventContainer = eventContainer;
@@ -28,7 +29,7 @@ export default class EventPresenter {
     this.#filterModel = filterModel;
 
     this.#newEventPresenter = new NewEventPresenter({
-      eventContainer: this.#eventListComponent.element,
+      pointListContainer: this.#eventListComponent.element,
       onDataChange: this.#handleViewAction,
       onDestroy: onNewPointDestroy
     });
@@ -57,6 +58,7 @@ export default class EventPresenter {
   }
 
   createPoint() {
+    this.#isCreating = true;
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this.#newEventPresenter.init();
@@ -91,8 +93,8 @@ export default class EventPresenter {
         this.#renderEventList();
         break;
       case UpdateType.MAJOR:
-        this.#renderEventList();
         this.#clearEventList({resetSortType: true});
+        this.#renderEventList();
         break;
     }
   };
@@ -146,9 +148,10 @@ export default class EventPresenter {
   };
 
   #renderEventList(){
-    if (this.points.length === 0) {
+    if (this.points.length === 0 && !this.#isCreating) {
       this.#noPointComponent = new NoPointsView(this.#filterType);
       render(this.#noPointComponent, this.#eventContainer);
+      remove(this.#sortComponent);
       return;
     }
 
