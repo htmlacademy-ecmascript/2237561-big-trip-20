@@ -1,17 +1,41 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
+import he from 'he';
 import dayjs from 'dayjs';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
-import {OFFERS, CITIES, TYPES} from '../const.js';
+import {OFFERS, CITIES, TYPES, EditType} from '../const.js';
 import {generateDestination} from '../mock/point.js';
+
+const ButtonLabel = {
+  [EditType.EDITING]: 'Delete',
+  [EditType.CREATING]: 'Cancel',
+};
+
+function createDeleteButtonTemplate({type}){
+  return `<button class="event__reset-btn" type="reset">${ButtonLabel[type]}</button> `;
+}
+
+function createRollupButtonTemplate(){
+  return `<button class="event__rollup-btn" type="button">
+      <span class="visually-hidden">Open event</span>
+    </button>`;
+}
+
+function createEditControlsTemplate({type}){
+  return `<button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+${createDeleteButtonTemplate({type})}
+${(type !== EditType.CREATING) ? createRollupButtonTemplate() : ''}
+  `;
+}
+
 
 function createEventOffers(offers) {
   return(
     `<section class="event__section  event__section--offers">
-  ${(offers.length !== null ? `
+  ${(offers?.length !== null ? `
 
     <div class="event__available-offers">
-      ${offers.map((offer) => `<div class="event__offer-selector">
+      ${offers?.map((offer) => `<div class="event__offer-selector">
         <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.id}" data-offer-id="${offer.id}" type="checkbox" name="event-offer-${offer.id}">
         <label class="event__offer-label" for="event-offer-${offer.id}">
           <span class="event__offer-title">${offer.title}</span>
@@ -29,8 +53,9 @@ function createCitiesTemplate(cities) {
 `)).join('');
 }
 
-function createEditPointTemplate(point) {
+function createEditPointTemplate(point, buttonType) {
   const {type, destination, dateFrom, dateTo, basePrice, offer, id} = point;
+
   let destinationPhotoes = '';
 
   const eventTypeTemplate = TYPES.map((eventType) =>
@@ -40,7 +65,7 @@ function createEditPointTemplate(point) {
     </div>`
   ).join('');
 
-  if (destination.description){
+  if (destination?.description){
     destinationPhotoes = destination.pictures.map((picture) =>
       `<img class="event__photo" src="${picture.src}" alt="Event photo">`
     ).join('');
@@ -54,7 +79,7 @@ function createEditPointTemplate(point) {
 
   const destinationPhotoesTemplate = `<section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-      <p class="event__destination-description">${destination.description}</p>
+      <p class="event__destination-description">${destination?.description}</p>
       ${destinationPhotoes}
     </section>`;
 
@@ -81,7 +106,7 @@ function createEditPointTemplate(point) {
       <label class="event__label  event__type-output" for="event-destination-1">
       ${type}
       </label>
-      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
+      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(destination?.name)}" list="destination-list-1">
       <datalist id="destination-list-1">
         ${createCitiesTemplate(CITIES)}
       </datalist>
@@ -100,14 +125,9 @@ function createEditPointTemplate(point) {
         <span class="visually-hidden">Price</span>
         &euro; ${basePrice}
       </label>
-      <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value=" ">
+      <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value=" ">
     </div>
-
-    <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-    <button class="event__reset-btn" type="reset">Delete</button>
-    <button class="event__rollup-btn" type="button">
-      <span class="visually-hidden">Open event</span>
-    </button>
+  ${createEditControlsTemplate({type:buttonType})}
   </header>
   <section class="event__details">
     <section class="event__section  event__section--offers">
@@ -126,18 +146,22 @@ export default class EditPointView extends AbstractStatefulView {
   #datepickerTo = null;
   #handleFormSubmit = null;
   #handleCloseFormClick = null;
+  #handleDeleteClick = null;
+  #type;
 
-  constructor({point, onFormSubmit, onCloseClick}){
+  constructor({point, onFormSubmit, onCloseClick, onDeleteClick, type = EditType.EDITING}){
     super();
     this._setState(EditPointView.parsePointToState(point));
     this.#handleFormSubmit = onFormSubmit;
     this.#handleCloseFormClick = onCloseClick;
+    this.#handleDeleteClick = onDeleteClick;
+    this.#type = type;
 
     this._restoreHandlers();
   }
 
   get template() {
-    return createEditPointTemplate(this._state);
+    return createEditPointTemplate(this._state, this.#type);
   }
 
   removeElement() {
@@ -161,9 +185,17 @@ export default class EditPointView extends AbstractStatefulView {
   }
 
   _restoreHandlers() {
+    if(this.#type === EditType.EDITING){
+      this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
+      this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
+    }
+    if(this.#type === EditType.CREATING){
+      this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
+    }
+
     this.element.querySelector('.event__save-btn').addEventListener('submit', this.#formSubmitHandler);
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
     this.element.querySelector('.event__type-group').addEventListener('change', this.#typeChangeHandler);
+
 
     const offerBlock = this.element.querySelector('.event__available-offers');
     if (offerBlock){
@@ -182,6 +214,11 @@ export default class EditPointView extends AbstractStatefulView {
   #closeClickHandler = (evt) => {
     evt.preventDefault();
     this.#handleCloseFormClick(EditPointView.parsePointToState(this._state));
+  };
+
+  #formDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleDeleteClick(EditPointView.parseStateToPoint(this._state));
   };
 
   #typeChangeHandler = (evt) => {
