@@ -125,7 +125,7 @@ function createEditPointTemplate(point, buttonType) {
         <span class="visually-hidden">Price</span>
         &euro; ${basePrice}
       </label>
-      <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value=" ">
+      <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value=" ">
     </div>
   ${createEditControlsTemplate({type:buttonType})}
   </header>
