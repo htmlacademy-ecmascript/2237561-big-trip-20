@@ -1,7 +1,7 @@
 import Observable from '../framework/observable.js';
 import {generateMockPoint} from '../mock/point.js';
 
-const POINT_COUNT = 1;
+const POINT_COUNT = 9;
 export default class PointsModel extends Observable {
   #points = Array.from({length: POINT_COUNT}, generateMockPoint);
   get points () {
