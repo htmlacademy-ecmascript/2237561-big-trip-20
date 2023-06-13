@@ -1,4 +1,4 @@
-const getRandomInteger = (a = 0, b = 1) => {
+/*const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
 
@@ -9,8 +9,8 @@ function getRandomArrayElement(items) {
   return items[Math.floor(Math.random() * items.length)];
 }
 
-/*function updateItem(items, update) {
+function updateItem(items, update) {
   return items.map((item) => item.id === update.id ? update : item);
-}*/
+}
 
-export {getRandomArrayElement, getRandomInteger};
+export {getRandomArrayElement, getRandomInteger};*/

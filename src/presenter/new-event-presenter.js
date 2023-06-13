@@ -1,8 +1,7 @@
 import {remove, render, RenderPosition} from '../framework/render.js';
 import EditPointView from '../view/edit-point-view.js';
 import {nanoid} from 'nanoid';
-import {UserAction, UpdateType, EditType} from '../const.js';
-import {generateMockPoint} from '../mock/point.js';
+import {BLANK_POINT, UserAction, UpdateType, EditType} from '../const.js';
 
 export default class NewEventPresenter {
   #pointListContainer = null;
@@ -24,7 +23,7 @@ export default class NewEventPresenter {
 
     this.#pointEditComponent = new EditPointView({
       type: EditType.CREATING,
-      point: generateMockPoint(),
+      point: BLANK_POINT,
       onFormSubmit: this.#handleFormSubmit,
       onDeleteClick: this.#handleDeleteClick
     });

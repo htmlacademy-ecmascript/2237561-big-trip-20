@@ -5,6 +5,7 @@ import {filter} from '../utils/filter.js';
 import EventListView from '../view/list-view.js';
 import ListSortView from '../view/list-sort-view.js';
 import NoPointsView from '../view/no-points-view.js';
+import LoadingView from '../view/loading-view.js';
 import PointPresenter from './point-presenter';
 import NewEventPresenter from './new-event-presenter.js';
 
@@ -21,6 +22,9 @@ export default class EventPresenter {
   #newEventPresenter = null;
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
+
+  #loadingComponent = new LoadingView();
+  #isLoading = true;
 
   constructor({eventContainer, pointsModel, filterModel, onNewPointDestroy}) {
     this.#eventContainer = eventContainer;
@@ -94,6 +98,11 @@ export default class EventPresenter {
         this.#clearEventList({resetSortType: true});
         this.#renderEventList();
         break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#renderEventList();
+        break;
     }
   };
 
@@ -131,6 +140,15 @@ export default class EventPresenter {
     render(this.#sortComponent, this.#eventListComponent.element, RenderPosition.BEFOREBEGIN);
   }
 
+  #renderNoPoints(){
+    this.#noPointComponent = new NoPointsView(this.#filterType);
+    render(this.#noPointComponent, this.#eventContainer);
+  }
+
+  #renderLoading() {
+    render(this.#loadingComponent, this.#eventListComponent.element, RenderPosition.AFTERBEGIN);
+  }
+
   #renderPoint(point) {
     const pointPresenter = new PointPresenter({
       pointListContainer: this.#eventListComponent.element,
@@ -146,14 +164,20 @@ export default class EventPresenter {
   };
 
   #renderEventList(){
-    if (this.points.length === 0) {
-      this.#noPointComponent = new NoPointsView(this.#filterType);
-      render(this.#noPointComponent, this.#eventContainer);
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+    const points = this.points;
+    const pointsCount = points.length;
+
+    if (pointsCount === 0) {
+      this.#renderNoPoints();
       //remove(this.#sortComponent); сортировка не возвращается после закрытия новой формы
       return;
     }
-
     render(this.#eventListComponent, this.#eventContainer);
-    this.#renderPoints();
+    //this.#renderPoints();
+    this.points.forEach((point) => this.#renderPoints(point));
   }
 }

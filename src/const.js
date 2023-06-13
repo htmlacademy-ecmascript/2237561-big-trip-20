@@ -1,5 +1,25 @@
-import {getRandomInteger} from './utils/common.js';
-import {nanoid} from 'nanoid';
+import dayjs from 'dayjs';
+
+const TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
+
+const BLANK_POINT = {
+  id: null,
+  basePrice: '',
+  dateFrom: dayjs().toDate(),
+  dateTo: dayjs().toDate(),
+  destination: {
+    description: '',
+    name: '',
+    pictures: [
+      {
+        src:  null,
+        description: null,
+      },]
+  },
+  isFavorite: false,
+  offers: [],
+  type: TYPES[0],
+};
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -13,136 +33,6 @@ const SortType = {
   OFFERS: 'offers',
 };
 
-const TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
-const CITIES = ['Denver', 'Stockholm', 'Rio', 'Berlin', 'Tokyo', 'Nairobi', 'Lisboa', 'Moscow','Manila', 'Pamplona', 'Palermo'];
-
-const Duration = {
-  DAY: 28,
-  HOUR: 24,
-  MIN: 59
-};
-
-const TripPrice = {
-  MIN: 100,
-  MAX: 5000
-};
-
-const OfferPrice = {
-  MIN: 10,
-  MAX: 100
-};
-
-const OFFERS = {
-  'taxi': [
-    {
-      'id' : nanoid(),
-      'title': 'Switch to comfort',
-      'price': getRandomInteger(OfferPrice.MIN, OfferPrice.MAX),
-    }, {
-      'id' : nanoid(),
-      'title': 'Choose the radio station',
-      'price': getRandomInteger(OfferPrice.MIN, OfferPrice.MAX),
-    },
-    {
-      'id': nanoid(),
-      'title': 'Upgrade to a business class',
-      'price': getRandomInteger(OfferPrice.MIN, OfferPrice.MAX),
-    }
-  ],
-  'check-in': [
-    {'id' : nanoid(),
-      'title': 'Add breakfast',
-      'price': getRandomInteger(OfferPrice.MIN, OfferPrice.MAX),
-    },
-    {
-      'id' : nanoid(),
-      'title': 'Order a meal from the restaurant',
-      'price': getRandomInteger(OfferPrice.MIN, OfferPrice.MAX),
-    }
-  ],
-  'train': [
-    {
-      'id' : nanoid(),
-      'title': 'Switch to comfort',
-      'price': getRandomInteger(OfferPrice.MIN, OfferPrice.MAX),
-    }, {
-      'id' : nanoid(),
-      'title': 'Add meal',
-      'price': getRandomInteger(OfferPrice.MIN, OfferPrice.MAX),
-    }, {
-      'id' : nanoid(),
-      'title': 'Choose seats',
-      'price': getRandomInteger(OfferPrice.MIN, OfferPrice.MAX),
-    }
-  ],
-  'ship': [
-
-  ],
-  'drive': [
-    {
-      'id' : nanoid(),
-      'title': 'Choose seats',
-      'price': getRandomInteger(OfferPrice.MIN, OfferPrice.MAX),
-    }, {
-      'id' : nanoid(),
-      'title': 'Choose the radio station',
-      'price': getRandomInteger(OfferPrice.MIN, OfferPrice.MAX),
-    }, {
-      'id' : nanoid(),
-      'title': 'Switch to comfort',
-      'price': getRandomInteger(OfferPrice.MIN, OfferPrice.MAX),
-    }
-  ],
-  'flight': [
-    {
-      'id' : nanoid(),
-      'title': 'Switch to comfort',
-      'price': getRandomInteger(OfferPrice.MIN, OfferPrice.MAX),
-    }, {
-      'id' : nanoid(),
-      'title': 'Add meal',
-      'price': getRandomInteger(OfferPrice.MIN, OfferPrice.MAX),
-    }, {
-      'id' : nanoid(),
-      'title': 'Choose seats',
-      'price': getRandomInteger(OfferPrice.MIN, OfferPrice.MAX),
-    }, {
-      'id' : nanoid(),
-      'title': 'Add luggage',
-      'price': getRandomInteger(OfferPrice.MIN, OfferPrice.MAX),
-    },
-    {
-      'id' : nanoid(),
-      'title': 'Book tickets',
-      'price': getRandomInteger(OfferPrice.MIN, OfferPrice.MAX),
-    }
-  ],
-  'bus': [
-    {
-      'id' : nanoid(),
-      'title': 'Switch to comfort',
-      'price': getRandomInteger(OfferPrice.MIN, OfferPrice.MAX),
-    }, {
-      'id' : nanoid(),
-      'title': 'Add meal',
-      'price': getRandomInteger(OfferPrice.MIN, OfferPrice.MAX),
-    }
-  ],
-  'sightseeing': [
-    {
-      'id' : nanoid(),
-      'title': 'Add meal',
-      'price': getRandomInteger(OfferPrice.MIN, OfferPrice.MAX),
-    }
-  ],
-  'restaurant': [
-    {
-      'id' : nanoid(),
-      'title': 'Choose seats',
-      'price': getRandomInteger(OfferPrice.MIN, OfferPrice.MAX),
-    }
-  ],
-};
 const FilterType = {
   EVERYTHING: 'everything',
   FUTURE: 'future',
@@ -159,7 +49,8 @@ const UserAction = {
 const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
-  MAJOR: 'MAJOR'
+  MAJOR: 'MAJOR',
+  INIT: 'INIT',
 };
 
 const EditType = {
@@ -167,6 +58,6 @@ const EditType = {
   CREATING: 'CREATING',
 };
 
-export {CITIES, TYPES, OFFERS, Duration, TripPrice, OfferPrice, FilterType, Mode, SortType, UserAction, UpdateType, EditType};
+export {TYPES, BLANK_POINT, FilterType, Mode, SortType, UserAction, UpdateType, EditType};
 
 

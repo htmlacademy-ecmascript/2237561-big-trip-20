@@ -3,8 +3,7 @@ import he from 'he';
 import dayjs from 'dayjs';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
-import {OFFERS, CITIES, TYPES, EditType} from '../const.js';
-import {generateDestination} from '../mock/point.js';
+import {TYPES, EditType} from '../const.js';
 
 const ButtonLabel = {
   [EditType.EDITING]: 'Delete',
@@ -47,14 +46,17 @@ function createEventOffers(offers) {
   </section>`);
 }
 
-function createCitiesTemplate(cities) {
-  return cities.map((city) => (`
-<option value="${city}"></option>
+function createDestinationsTemplate(destinations) {
+  return destinations.map((destination) => (`
+<option value="${destination}"></option>
 `)).join('');
 }
 
-function createEditPointTemplate(point, buttonType) {
+function createEditPointTemplate(point, buttonType, destinationItems) {
   const {type, destination, dateFrom, dateTo, basePrice, offer, id} = point;
+
+  const destinationNames = destinationItems.map((item) => item['name']);
+  const destinationsTemplate = createDestinationsTemplate(destinationNames, destination.name);
 
   let destinationPhotoes = '';
 
@@ -108,7 +110,7 @@ function createEditPointTemplate(point, buttonType) {
       </label>
       <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(destination?.name)}" list="destination-list-1">
       <datalist id="destination-list-1">
-        ${createCitiesTemplate(CITIES)}
+        ${destinationsTemplate}
       </datalist>
     </div>
 
@@ -148,20 +150,22 @@ export default class EditPointView extends AbstractStatefulView {
   #handleCloseFormClick = null;
   #handleDeleteClick = null;
   #type;
+  #destinations = null;
 
-  constructor({point, onFormSubmit, onCloseClick, onDeleteClick, type = EditType.EDITING}){
+  constructor({point, onFormSubmit, onCloseClick, onDeleteClick, type = EditType.EDITING, destinations}){
     super();
     this._setState(EditPointView.parsePointToState(point));
     this.#handleFormSubmit = onFormSubmit;
     this.#handleCloseFormClick = onCloseClick;
     this.#handleDeleteClick = onDeleteClick;
     this.#type = type;
+    this.#destinations = destinations;
 
     this._restoreHandlers();
   }
 
   get template() {
-    return createEditPointTemplate(this._state, this.#type);
+    return createEditPointTemplate(this._state, this.#type, this.#destinations);
   }
 
   removeElement() {
@@ -225,17 +229,19 @@ export default class EditPointView extends AbstractStatefulView {
     evt.preventDefault();
     this.updateElement({
       type: evt.target.value,
-      offer: OFFERS[evt.target.value]
+      offer: []
     });
   };
 
   #destinationInputHandler = (evt) => {
     evt.preventDefault();
-    const eventDestinationInput = evt.target.closest('input[name="event-destination"]');
+    const newDestination = this.#destinations.find((destination) => destination.name === evt.target.value);
+
     this.updateElement({
       destination: {
-        ...generateDestination(0),
-        name: eventDestinationInput.value,
+        name: newDestination.name,
+        description: newDestination.description,
+        pictures: [...newDestination.pictures],
       },
     });
   };
