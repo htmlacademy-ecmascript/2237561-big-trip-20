@@ -7,15 +7,7 @@ const BLANK_POINT = {
   basePrice: '',
   dateFrom: dayjs().toDate(),
   dateTo: dayjs().toDate(),
-  destination: {
-    description: '',
-    name: '',
-    pictures: [
-      {
-        src:  null,
-        description: null,
-      },]
-  },
+  destination: null,
   isFavorite: false,
   offers: [],
   type: TYPES[0],

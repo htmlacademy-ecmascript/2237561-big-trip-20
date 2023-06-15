@@ -12,7 +12,8 @@ export default class PointPresenter {
   #pointEditComponent = null;
 
   #point = null;
-  #destinations = null;
+  #allDestinations = [];
+  #allOffers = [];
   #mode = Mode.DEFAULT;
 
   constructor({pointListContainer, onDataChange, onModeChange}) {
@@ -21,22 +22,26 @@ export default class PointPresenter {
     this.#handleModeChange = onModeChange;
   }
 
-  init(point, destinations = this.#destinations) {
+  init(point, allDestinations, allOffers) {
     this.#point = point;
-    this.#destinations = destinations;
+    this.#allDestinations = allDestinations;
+    this.#allOffers = allOffers;
 
     const prevPointComponent = this.#pointComponent;
     const prevPointEditComponent = this.#pointEditComponent;
 
     this.#pointComponent = new TripPointView({
       point: this.#point,
+      allDestinations: this.#allDestinations,
+      allOffers: this.#allOffers,
       onEditPointClick: this.#handleEditPointClick,
       onFavoriteClick: this.#handleFavoriteClick,
     });
 
     this.#pointEditComponent = new EditPointView({
       point: this.#point,
-      destinations: this.#destinations,
+      allDestinations: this.#allDestinations,
+      allOffers: this.#allOffers,
       onFormSubmit: this.#handleFormSubmit,
       onCloseClick: this.#handleCloseEditClick,
       onDeleteClick: this.#handleDeleteClick,

@@ -4,12 +4,13 @@ import dayjs from 'dayjs';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import {TYPES, EditType} from '../const.js';
+import {getOffersByType, getSelectedDestination, isOfferIsSelected} from '../utils/point.js';
 
 const ButtonLabel = {
   [EditType.EDITING]: 'Delete',
   [EditType.CREATING]: 'Cancel',
 };
-
+//темплейты для кнопок формы
 function createDeleteButtonTemplate({type}){
   return `<button class="event__reset-btn" type="reset">${ButtonLabel[type]}</button> `;
 }
@@ -27,8 +28,7 @@ ${(type !== EditType.CREATING) ? createRollupButtonTemplate() : ''}
   `;
 }
 
-
-function createEventOffers(offers) {
+/*function createEventOffers(offers) {
   return(
     `<section class="event__section  event__section--offers">
   ${(offers?.length !== null ? `
@@ -44,74 +44,125 @@ function createEventOffers(offers) {
       </div>`).join('')}
     </div>` : '')}
   </section>`);
-}
+}*/
 
-function createDestinationsTemplate(destinations) {
-  return destinations.map((destination) => (`
-<option value="${destination}"></option>
-`)).join('');
-}
-
-function createEditPointTemplate(point, buttonType, destinationItems) {
-  const {type, destination, dateFrom, dateTo, basePrice, offer, id} = point;
-
-  const destinationNames = destinationItems.map((item) => item['name']);
-  const destinationsTemplate = createDestinationsTemplate(destinationNames, destination.name);
-
-  let destinationPhotoes = '';
-
-  const eventTypeTemplate = TYPES.map((eventType) =>
-    `<div class="event__type-item">
-      <input id="event-type-${eventType}-${id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${eventType}">
-      <label class="event__type-label  event__type-label--${eventType}" for="event-type-${eventType}-${id}">${eventType[0].toUpperCase() + eventType.slice(1)}</label>
-    </div>`
-  ).join('');
-
-  if (destination?.description){
-    destinationPhotoes = destination.pictures.map((picture) =>
-      `<img class="event__photo" src="${picture.src}" alt="Event photo">`
-    ).join('');
-
-    destinationPhotoes = `<div class="event__photos-container">
-        <div class="event__photos-tape">
-          ${destinationPhotoes}
-        </div>
-      </div>`;
+//описание и фото
+function renderDestinationPictures (pictures) {
+  if (!pictures.length) {
+    return '';
   }
+  const destinationPictures = pictures.map((picture) => `<img class="event__photo" src=${picture.src} alt=${picture.description}>`).join('');
 
-  const destinationPhotoesTemplate = `<section class="event__section  event__section--destination">
-      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-      <p class="event__destination-description">${destination?.description}</p>
-      ${destinationPhotoes}
-    </section>`;
+  return `<div class="event__photos-container">
+            <div class="event__photos-tape">${destinationPictures}</div>
+          </div>`;
+}
+function createDestinationInfoTemplate (destination){
+  const { description, pictures } = destination;
+  const destinationDescription = description ? description : '';
 
+  return `<section class="event__section  event__section--destination">
+            <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+            <p class="event__destination-description">${destinationDescription}</p>
+              ${renderDestinationPictures(pictures)}
+          </section>`;
+}
+
+//список городов
+function renderDestinationOptionsTemplate (cities) {
+  if (!cities.length) {
+    return '';
+  }
+  return cities.map((city) => `<option value=${city.name}></option>`).join('');
+}
+
+function createDestinationTemplate (destinations, initialDestination, isDisabled) {
+
+  const destinationName = initialDestination !== null ? initialDestination.name : '';
+
+  return `<input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(destinationName)}" list="destination-list-1">
+          <datalist id="destination-list-1" ${isDisabled ? 'disabled' : ''}>
+            ${renderDestinationOptionsTemplate(destinations)}
+          </datalist>`;
+}
+
+//тип точки
+function renderTypeOptions (pointTypes, currentOption){
+  pointTypes
+    .map(
+      (pointType, index) =>
+        `<div class="event__type-item">
+            <input id="event-type-${pointType}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value=${pointType} ${currentOption === pointType ? 'checked' : ''}>
+            <label class="event__type-label  event__type-label--${pointType}" for="event-type-${pointType}-1">${TYPES[index]}</label>
+        </div>`
+    )
+    .join('');
+}
+function createTypesTemplate (type, isDisabled){
+  return`<div class="event__type-wrapper">
+    <label class="event__type  event__type-btn" for="event-type-toggle-1">
+        <span class="visually-hidden">Choose event type</span>
+        <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
+    </label>
+    <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox" ${isDisabled ? 'disabled' : ''}>
+
+    <div class="event__type-list">
+        <fieldset class="event__type-group">
+        <legend class="visually-hidden">Event type</legend>
+        ${renderTypeOptions(TYPES, type)}
+        </fieldset>
+    </div>
+  </div>`;
+}
+
+//офферы
+function renderOffers (offers, selectedOffersId, isDisabled){
+  offers
+    .map((offer) => {
+      const offerName = `event-offer-${offer.id}`;
+
+      return `<div class="event__offer-selector">
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.id}"
+        type="checkbox" name=${offerName} ${isOfferIsSelected(offer.id, selectedOffersId) ? 'checked' : ''}
+        data-offer-id="${offer.id}"
+        ${isDisabled ? 'disabled' : ''}>
+        <label class="event__offer-label" for="event-offer-${offer.id}">
+            <span class="event__offer-title">${offer.title}</span>
+            &plus;&euro;&nbsp;
+            <span class="event__offer-price">${offer.price}</span>
+        </label>
+      </div>`;
+    })
+    .join('');
+}
+function createFormOffersTemplate (offers, selectedOffersId, isDisabled){
+  return `<section class="event__section  event__section--offers">
+    <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+    <div class="event__available-offers">
+      ${renderOffers(offers, selectedOffersId, isDisabled)}
+    </div>
+  </section>`;
+}
+
+function createEditPointTemplate(point, buttonType, destinations, offers) {
+  const {type, destination, dateFrom, dateTo, basePrice, offers: selectedOffersId, isDisabled} = point;
+
+  const isDestinationInfo = destination !== null;
+  const initialDestination = destination !== null ? getSelectedDestination(destinations, destination) : destination;
+  offers = getOffersByType(offers, point.type);
+  const isOffers = offers.length;
+  const isOffersAndDestinationInfo = isOffers || isDestinationInfo;
 
   return `<li class="trip-events__item">
   <form class="event event--edit" action="#" method="post">
   <header class="event__header">
-    <div class="event__type-wrapper">
-      <label class="event__type  event__type-btn" for="event-type-toggle-1">
-        <span class="visually-hidden">Choose event type</span>
-        <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
-      </label>
-      <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
-
-      <div class="event__type-list">
-        <fieldset class="event__type-group">
-          <legend class="visually-hidden">Event type</legend>
-          ${eventTypeTemplate}
-        </fieldset>
-      </div>
-    </div>
+  ${createTypesTemplate(type, isDisabled)}
 
     <div class="event__field-group  event__field-group--destination">
       <label class="event__label  event__type-output" for="event-destination-1">
       ${type}
       </label>
-      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(destination?.name)}" list="destination-list-1">
-      <datalist id="destination-list-1">
-        ${destinationsTemplate}
-      </datalist>
+      ${createDestinationTemplate(destinations, initialDestination, isDisabled)}
     </div>
 
     <div class="event__field-group  event__field-group--time">
@@ -131,13 +182,10 @@ function createEditPointTemplate(point, buttonType, destinationItems) {
     </div>
   ${createEditControlsTemplate({type:buttonType})}
   </header>
-  <section class="event__details">
-    <section class="event__section  event__section--offers">
-      <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-      ${createEventOffers(offer)}
-    </section>
-    ${destinationPhotoesTemplate}
-  </section>
+  ${isOffersAndDestinationInfo ? `<section class="event__details">
+  ${isOffers ? createFormOffersTemplate(offers, selectedOffersId, isDisabled) : ''}
+    ${isDestinationInfo ? createDestinationInfoTemplate(initialDestination) : ''}
+    </section>` : ''}
 </form>
 </li>`;
 }
@@ -150,22 +198,24 @@ export default class EditPointView extends AbstractStatefulView {
   #handleCloseFormClick = null;
   #handleDeleteClick = null;
   #type;
-  #destinations = null;
+  #destinations = [];
+  #offers = [];
 
-  constructor({point, onFormSubmit, onCloseClick, onDeleteClick, type = EditType.EDITING, destinations}){
+  constructor({point, allDestinations, allOffers, onFormSubmit, onCloseClick, onDeleteClick, type = EditType.EDITING}){
     super();
     this._setState(EditPointView.parsePointToState(point));
+    this.#destinations = allDestinations;
+    this.#offers = allOffers;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleCloseFormClick = onCloseClick;
     this.#handleDeleteClick = onDeleteClick;
     this.#type = type;
-    this.#destinations = destinations;
 
     this._restoreHandlers();
   }
 
   get template() {
-    return createEditPointTemplate(this._state, this.#type, this.#destinations);
+    return createEditPointTemplate(this._state, this.#type, this.#destinations, this.#offers);
   }
 
   removeElement() {
@@ -235,14 +285,10 @@ export default class EditPointView extends AbstractStatefulView {
 
   #destinationInputHandler = (evt) => {
     evt.preventDefault();
-    const newDestination = this.#destinations.find((destination) => destination.name === evt.target.value);
+    const newDestination = this.#destinations.find((destination) => evt.target.value === destination.name);
 
     this.updateElement({
-      destination: {
-        name: newDestination.name,
-        description: newDestination.description,
-        pictures: [...newDestination.pictures],
-      },
+      destination: newDestination.id,
     });
   };
 

@@ -1,6 +1,6 @@
 import {render, remove, RenderPosition} from '../framework/render.js';
 import {sortByDate, sortByTime, sortByPrice} from '../utils/sort.js';
-import {SortType, FilterType, UserAction, UpdateType} from '../const.js';
+import {BLANK_POINT, SortType, FilterType, UserAction, UpdateType} from '../const.js';
 import {filter} from '../utils/filter.js';
 import EventListView from '../view/list-view.js';
 import ListSortView from '../view/list-sort-view.js';
@@ -47,12 +47,14 @@ export default class EventPresenter {
     const filteredPoints = filter[this.#filterType](points);
 
     switch (this.#currentSortType) {
+      case SortType.DAY:
+        return filteredPoints.sort(sortByDate);
       case SortType.TIME:
         return filteredPoints.sort(sortByTime);
       case SortType.PRICE:
         return filteredPoints.sort(sortByPrice);
     }
-    return filteredPoints.sort(sortByDate);
+    return filteredPoints;
   }
 
   init() {
@@ -61,9 +63,10 @@ export default class EventPresenter {
   }
 
   createPoint() {
+    const point = BLANK_POINT;
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this.#newEventPresenter.init();
+    this.#newEventPresenter.init(point, this.destinations, this.offers);
   }
 
   #handleModeChange = () => {
@@ -149,13 +152,13 @@ export default class EventPresenter {
     render(this.#loadingComponent, this.#eventListComponent.element, RenderPosition.AFTERBEGIN);
   }
 
-  #renderPoint(point) {
+  #renderPoint(point, allDestinations, allOffers) {
     const pointPresenter = new PointPresenter({
       pointListContainer: this.#eventListComponent.element,
       onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange,
     });
-    pointPresenter.init(point);
+    pointPresenter.init(point, allDestinations, allOffers);
     this.#pointPresenters.set(point.id, pointPresenter);
   }
 
@@ -164,20 +167,20 @@ export default class EventPresenter {
   };
 
   #renderEventList(){
+    render(this.#eventListComponent, this.#eventContainer);
+
     if (this.#isLoading) {
       this.#renderLoading();
       return;
     }
     const points = this.points;
-    const pointsCount = points.length;
 
-    if (pointsCount === 0) {
+    if (!points.length) {
       this.#renderNoPoints();
-      //remove(this.#sortComponent); сортировка не возвращается после закрытия новой формы
+      remove(this.#sortComponent); //сортировка не возвращается после закрытия новой формы
       return;
     }
-    render(this.#eventListComponent, this.#eventContainer);
     //this.#renderPoints();
-    this.points.forEach((point) => this.#renderPoints(point));
+    this.points.forEach((point) => this.#renderPoints(point, this.destinations, this.offers));
   }
 }
