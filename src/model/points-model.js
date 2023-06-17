@@ -10,7 +10,6 @@ export default class PointsModel extends Observable {
   constructor(pointsApiService) {
     super();
     this.#pointsApiService = pointsApiService;
-
   }
 
   get points () {

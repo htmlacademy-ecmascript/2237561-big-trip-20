@@ -43,8 +43,10 @@ function handleNewPointButtonClick () {
 }
 
 render(new TripMainInfoView(), tripMainInfoElement, RenderPosition.AFTERBEGIN);
-render(newPointButtonComponent, tripMainInfoElement);
+
 
 filterPresenter.init();
 eventPresenter.init();
-pointsModel.init();
+pointsModel.init().finally(() => {
+  render(newPointButtonComponent, tripMainInfoElement);
+});

@@ -188,7 +188,7 @@ export default class EventPresenter {
       remove(this.#sortComponent); //сортировка не возвращается после закрытия новой формы
       return;
     }
-    //this.#renderPoints();
-    this.points.forEach((point) => this.#renderPoints(point, this.destinations, this.offers));
+
+    this.#renderPoints();
   }
 }
