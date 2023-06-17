@@ -57,6 +57,14 @@ export default class EventPresenter {
     return filteredPoints;
   }
 
+  get offers() {
+    return this.#pointsModel.offers;
+  }
+
+  get destinations() {
+    return this.#pointsModel.destinations;
+  }
+
   init() {
     this.#renderEventList();
     this.#renderSort();
@@ -163,7 +171,7 @@ export default class EventPresenter {
   }
 
   #renderPoints = () => {
-    this.points.forEach((point) => this.#renderPoint(point));
+    this.points.forEach((point) => this.#renderPoint(point,this.destinations, this.offers));
   };
 
   #renderEventList(){

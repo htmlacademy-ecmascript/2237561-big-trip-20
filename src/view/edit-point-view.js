@@ -27,15 +27,21 @@ ${createDeleteButtonTemplate({type})}
 ${(type !== EditType.CREATING) ? createRollupButtonTemplate() : ''}
   `;
 }
-
-/*function createEventOffers(offers) {
+//оферы
+function createEventOffers(offers, selectedOffersId, isDisabled) {
   return(
     `<section class="event__section  event__section--offers">
   ${(offers?.length !== null ? `
 
     <div class="event__available-offers">
       ${offers?.map((offer) => `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.id}" data-offer-id="${offer.id}" type="checkbox" name="event-offer-${offer.id}">
+        <input class="event__offer-checkbox  visually-hidden"
+        id="event-offer-${offer.id}"
+        ${isOfferIsSelected(offer.id, selectedOffersId) ? 'checked' : ''}
+        data-offer-id="${offer.id}"
+        ${isDisabled ? 'disabled' : ''}
+        type="checkbox"
+        name="event-offer-${offer.id}">
         <label class="event__offer-label" for="event-offer-${offer.id}">
           <span class="event__offer-title">${offer.title}</span>
           &plus;&euro;&nbsp;
@@ -44,8 +50,7 @@ ${(type !== EditType.CREATING) ? createRollupButtonTemplate() : ''}
       </div>`).join('')}
     </div>` : '')}
   </section>`);
-}*/
-
+}
 //описание и фото
 function renderDestinationPictures (pictures) {
   if (!pictures.length) {
@@ -67,7 +72,6 @@ function createDestinationInfoTemplate (destination){
               ${renderDestinationPictures(pictures)}
           </section>`;
 }
-
 //список городов
 function renderDestinationOptionsTemplate (cities) {
   if (!cities.length) {
@@ -86,64 +90,6 @@ function createDestinationTemplate (destinations, initialDestination, isDisabled
           </datalist>`;
 }
 
-//тип точки
-function renderTypeOptions (pointTypes, currentOption){
-  pointTypes
-    .map(
-      (pointType, index) =>
-        `<div class="event__type-item">
-            <input id="event-type-${pointType}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value=${pointType} ${currentOption === pointType ? 'checked' : ''}>
-            <label class="event__type-label  event__type-label--${pointType}" for="event-type-${pointType}-1">${TYPES[index]}</label>
-        </div>`
-    )
-    .join('');
-}
-function createTypesTemplate (type, isDisabled){
-  return`<div class="event__type-wrapper">
-    <label class="event__type  event__type-btn" for="event-type-toggle-1">
-        <span class="visually-hidden">Choose event type</span>
-        <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
-    </label>
-    <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox" ${isDisabled ? 'disabled' : ''}>
-
-    <div class="event__type-list">
-        <fieldset class="event__type-group">
-        <legend class="visually-hidden">Event type</legend>
-        ${renderTypeOptions(TYPES, type)}
-        </fieldset>
-    </div>
-  </div>`;
-}
-
-//офферы
-function renderOffers (offers, selectedOffersId, isDisabled){
-  offers
-    .map((offer) => {
-      const offerName = `event-offer-${offer.id}`;
-
-      return `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.id}"
-        type="checkbox" name=${offerName} ${isOfferIsSelected(offer.id, selectedOffersId) ? 'checked' : ''}
-        data-offer-id="${offer.id}"
-        ${isDisabled ? 'disabled' : ''}>
-        <label class="event__offer-label" for="event-offer-${offer.id}">
-            <span class="event__offer-title">${offer.title}</span>
-            &plus;&euro;&nbsp;
-            <span class="event__offer-price">${offer.price}</span>
-        </label>
-      </div>`;
-    })
-    .join('');
-}
-function createFormOffersTemplate (offers, selectedOffersId, isDisabled){
-  return `<section class="event__section  event__section--offers">
-    <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-    <div class="event__available-offers">
-      ${renderOffers(offers, selectedOffersId, isDisabled)}
-    </div>
-  </section>`;
-}
-
 function createEditPointTemplate(point, buttonType, destinations, offers) {
   const {type, destination, dateFrom, dateTo, basePrice, offers: selectedOffersId, isDisabled} = point;
 
@@ -153,10 +99,30 @@ function createEditPointTemplate(point, buttonType, destinations, offers) {
   const isOffers = offers.length;
   const isOffersAndDestinationInfo = isOffers || isDestinationInfo;
 
+  const eventTypeTemplate = TYPES.map((eventType, id) =>
+    `<div class="event__type-item">
+      <input id="event-type-${eventType}-${id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${eventType}">
+      <label class="event__type-label  event__type-label--${eventType}" for="event-type-${eventType}-${id}">${eventType[0].toUpperCase() + eventType.slice(1)}</label>
+    </div>`
+  ).join('');
+
   return `<li class="trip-events__item">
-  <form class="event event--edit" action="#" method="post">
-  <header class="event__header">
-  ${createTypesTemplate(type, isDisabled)}
+    <form class="event event--edit" action="#" method="post">
+    <header class="event__header">
+    <div class="event__type-wrapper">
+      <label class="event__type  event__type-btn" for="event-type-toggle-1">
+        <span class="visually-hidden">Choose event type</span>
+        <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
+      </label>
+      <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+
+      <div class="event__type-list">
+        <fieldset class="event__type-group">
+          <legend class="visually-hidden">Event type</legend>
+          ${eventTypeTemplate}
+        </fieldset>
+      </div>
+    </div>
 
     <div class="event__field-group  event__field-group--destination">
       <label class="event__label  event__type-output" for="event-destination-1">
@@ -183,7 +149,7 @@ function createEditPointTemplate(point, buttonType, destinations, offers) {
   ${createEditControlsTemplate({type:buttonType})}
   </header>
   ${isOffersAndDestinationInfo ? `<section class="event__details">
-  ${isOffers ? createFormOffersTemplate(offers, selectedOffersId, isDisabled) : ''}
+  ${isOffers ? createEventOffers(offers, selectedOffersId, isDisabled) : ''}
     ${isDestinationInfo ? createDestinationInfoTemplate(initialDestination) : ''}
     </section>` : ''}
 </form>

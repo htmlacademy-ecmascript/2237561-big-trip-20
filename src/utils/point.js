@@ -6,7 +6,4 @@ const getSelectedOffers = (offers, offersIds) => offers.filter((item) => offersI
 
 const isOfferIsSelected = (offerId, selectedOffersIds) => selectedOffersIds.includes(offerId);
 
-const isEscKey = (evt) => evt.key === 'Escape' || evt.key === 'Esc';
-
-
-export {isEscKey, getOffersByType, getSelectedDestination,getSelectedOffers, isOfferIsSelected,};
+export {getOffersByType, getSelectedDestination,getSelectedOffers, isOfferIsSelected,};

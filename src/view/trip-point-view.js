@@ -3,19 +3,18 @@ import {humanizePointDate, getPointDuration} from '../utils/time.js';
 import { getOffersByType, getSelectedDestination, getSelectedOffers } from '../utils/point.js';
 
 const createOffersTemplate = (offers) => {
-  let offersTemplate = '';
-  if (offers) {
-    offers.forEach((offer) => {
-      if (offer.isSelected) {
-        offersTemplate += `<li className="event__offer">
-        <span className="event__offer-title">${offer.title}</span>
-        &plus;&euro;&nbsp;
-        <span className="event__offer-price">${offer.price}</span>
-         </li>`;
-      }
-    });
+  if (!offers.length) {
+    return '';
   }
-  return offersTemplate;
+  return offers
+    .map(
+      (offer) =>
+        `<li class="event__offer">
+          <span class="event__offer-title">${offer.title}</span>
+          +€&nbsp;
+          <span class="event__offer-price">${offer.price}</span>
+        </li>`
+    ).join('');
 };
 
 function createTripPointTemplate(point, destinations, offers) {
