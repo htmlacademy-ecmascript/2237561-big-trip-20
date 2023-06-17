@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+/*import dayjs from 'dayjs';
 import {nanoid} from 'nanoid';
 import {getRandomArrayElement, getRandomInteger} from '../utils/common.js';
 import {CITIES, TYPES, OFFERS, TripPrice, Duration} from '../const.js';
@@ -47,4 +47,4 @@ const generateMockPoint = () => {
   };
 };
 
-export {generateMockPoint, generateDestination};
+export {generateMockPoint, generateDestination};*/

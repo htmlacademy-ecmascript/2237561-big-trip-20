@@ -1,10 +1,11 @@
 import {render, remove, RenderPosition} from '../framework/render.js';
 import {sortByDate, sortByTime, sortByPrice} from '../utils/sort.js';
-import {SortType, FilterType, UserAction, UpdateType} from '../const.js';
+import {BLANK_POINT, SortType, FilterType, UserAction, UpdateType} from '../const.js';
 import {filter} from '../utils/filter.js';
 import EventListView from '../view/list-view.js';
 import ListSortView from '../view/list-sort-view.js';
 import NoPointsView from '../view/no-points-view.js';
+import LoadingView from '../view/loading-view.js';
 import PointPresenter from './point-presenter';
 import NewEventPresenter from './new-event-presenter.js';
 
@@ -21,6 +22,9 @@ export default class EventPresenter {
   #newEventPresenter = null;
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
+
+  #loadingComponent = new LoadingView();
+  #isLoading = true;
 
   constructor({eventContainer, pointsModel, filterModel, onNewPointDestroy}) {
     this.#eventContainer = eventContainer;
@@ -43,12 +47,22 @@ export default class EventPresenter {
     const filteredPoints = filter[this.#filterType](points);
 
     switch (this.#currentSortType) {
+      case SortType.DAY:
+        return filteredPoints.sort(sortByDate);
       case SortType.TIME:
         return filteredPoints.sort(sortByTime);
       case SortType.PRICE:
         return filteredPoints.sort(sortByPrice);
     }
-    return filteredPoints.sort(sortByDate);
+    return filteredPoints;
+  }
+
+  get offers() {
+    return this.#pointsModel.offers;
+  }
+
+  get destinations() {
+    return this.#pointsModel.destinations;
   }
 
   init() {
@@ -57,9 +71,10 @@ export default class EventPresenter {
   }
 
   createPoint() {
+    const point = BLANK_POINT;
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this.#newEventPresenter.init();
+    this.#newEventPresenter.init(point, this.destinations, this.offers);
   }
 
   #handleModeChange = () => {
@@ -92,6 +107,11 @@ export default class EventPresenter {
         break;
       case UpdateType.MAJOR:
         this.#clearEventList({resetSortType: true});
+        this.#renderEventList();
+        break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
         this.#renderEventList();
         break;
     }
@@ -131,29 +151,44 @@ export default class EventPresenter {
     render(this.#sortComponent, this.#eventListComponent.element, RenderPosition.BEFOREBEGIN);
   }
 
-  #renderPoint(point) {
+  #renderNoPoints(){
+    this.#noPointComponent = new NoPointsView(this.#filterType);
+    render(this.#noPointComponent, this.#eventContainer);
+  }
+
+  #renderLoading() {
+    render(this.#loadingComponent, this.#eventListComponent.element, RenderPosition.AFTERBEGIN);
+  }
+
+  #renderPoint(point, allDestinations, allOffers) {
     const pointPresenter = new PointPresenter({
       pointListContainer: this.#eventListComponent.element,
       onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange,
     });
-    pointPresenter.init(point);
+    pointPresenter.init(point, allDestinations, allOffers);
     this.#pointPresenters.set(point.id, pointPresenter);
   }
 
   #renderPoints = () => {
-    this.points.forEach((point) => this.#renderPoint(point));
+    this.points.forEach((point) => this.#renderPoint(point,this.destinations, this.offers));
   };
 
   #renderEventList(){
-    if (this.points.length === 0) {
-      this.#noPointComponent = new NoPointsView(this.#filterType);
-      render(this.#noPointComponent, this.#eventContainer);
-      //remove(this.#sortComponent); сортировка не возвращается после закрытия новой формы
+    render(this.#eventListComponent, this.#eventContainer);
+
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+    const points = this.points;
+
+    if (!points.length) {
+      this.#renderNoPoints();
+      remove(this.#sortComponent); //сортировка не возвращается после закрытия новой формы
       return;
     }
 
-    render(this.#eventListComponent, this.#eventContainer);
     this.#renderPoints();
   }
 }

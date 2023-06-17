@@ -2,7 +2,6 @@ import {remove, render, RenderPosition} from '../framework/render.js';
 import EditPointView from '../view/edit-point-view.js';
 import {nanoid} from 'nanoid';
 import {UserAction, UpdateType, EditType} from '../const.js';
-import {generateMockPoint} from '../mock/point.js';
 
 export default class NewEventPresenter {
   #pointListContainer = null;
@@ -10,6 +9,9 @@ export default class NewEventPresenter {
   #handleDestroy = null;
 
   #pointEditComponent = null;
+  #point = null;
+  #allDestinations = [];
+  #allOffers = [];
 
   constructor({pointListContainer, onDataChange, onDestroy}) {
     this.#pointListContainer = pointListContainer;
@@ -17,14 +19,20 @@ export default class NewEventPresenter {
     this.#handleDestroy = onDestroy;
   }
 
-  init() {
+  init(point, allDestinations, allOffers) {
+    this.#point = point;
+    this.#allDestinations = allDestinations;
+    this.#allOffers = allOffers;
+
     if (this.#pointEditComponent !== null) {
       return;
     }
 
     this.#pointEditComponent = new EditPointView({
       type: EditType.CREATING,
-      point: generateMockPoint(),
+      point: this.#point,
+      allDestinations: this.#allDestinations,
+      allOffers: this.#allOffers,
       onFormSubmit: this.#handleFormSubmit,
       onDeleteClick: this.#handleDeleteClick
     });
