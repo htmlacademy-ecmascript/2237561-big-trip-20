@@ -11,8 +11,8 @@ const ButtonLabel = {
   [EditType.CREATING]: 'Cancel',
 };
 
-function createDeleteButtonTemplate({type, isDeleting, isDisabled}){
-  return `<button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''} ${isDeleting ? 'Deleting...' : 'Delete'}>${ButtonLabel[type]}</button> `;
+function createDeleteButtonTemplate({type, isDisabled, isDeleting}){
+  return `<button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''} >${isDeleting ? 'Deleting...' : ButtonLabel[type]}</button> `;
 }
 
 function createRollupButtonTemplate(){
@@ -21,9 +21,9 @@ function createRollupButtonTemplate(){
     </button>`;
 }
 
-function createEditControlsTemplate({type, isSaving, isDisabled}){
-  return `<button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
-${createDeleteButtonTemplate({type})}
+function createEditControlsTemplate({type, point}){
+  return `<button class="event__save-btn  btn  btn--blue" type="submit" ${point.isDisabled ? 'disabled' : ''}>${point.isSaving ? 'Saving...' : 'Save'}</button>
+${createDeleteButtonTemplate({type, isDeleting: point.isDeleting, isDisabled: point.isDisabled})}
 ${(type !== EditType.CREATING) ? createRollupButtonTemplate() : ''}
   `;
 }
@@ -149,7 +149,7 @@ function createEditPointTemplate(point, buttonType, destinations, offers) {
     </div>
 
     ${createPriceTemplate(initialPrice, isDisabled)}
-    ${createEditControlsTemplate({type:buttonType, isSaving: point.isSaving, isDisabled: point.isDisabled, isDeleting: point.isDeleting})}
+    ${createEditControlsTemplate({type:buttonType, point})}
   </header>
     ${isOffersAndDestinationInfo ? `<section class="event__details">
     ${isOffers ? createEventOffers(offers, selectedOffersId, isDisabled) : ''}
