@@ -78,7 +78,6 @@ export default class EventPresenter {
 
   init() {
     this.#renderEventList();
-    this.#renderSort();
   }
 
   createPoint() {
@@ -151,6 +150,9 @@ export default class EventPresenter {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
 
+    remove(this.#sortComponent);
+    remove(this.#loadingComponent);
+
     if (this.#noPointComponent) {
       remove(this.#noPointComponent);
     }
@@ -158,7 +160,6 @@ export default class EventPresenter {
     if (resetSortType) {
       this.#currentSortType = SortType.DAY;
     }
-
   }
 
   #handleSortTypeChange = (sortType) => {
@@ -218,6 +219,6 @@ export default class EventPresenter {
     }
 
     this.#renderPoints();
-    //this.#renderSort();
+    this.#renderSort();
   }
 }
