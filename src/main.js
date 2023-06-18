@@ -7,7 +7,7 @@ import FilterModel from './model/filter-model.js';
 import {render, RenderPosition} from './framework/render.js';
 import PointsApiService from './points-api-service.js';
 
-const AUTHORIZATION = 'Basic A5kEld3xsrdhnrtj45';
+const AUTHORIZATION = 'Basic A5kEld3xsrdhnrtj4567';
 const END_POINT = 'https://20.ecmascript.pages.academy/big-trip';
 
 
