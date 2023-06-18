@@ -11,10 +11,8 @@ const ButtonLabel = {
   [EditType.CREATING]: 'Cancel',
 };
 
-
-//темплейты для кнопок формы
-function createDeleteButtonTemplate({type, isDisabled}){
-  return `<button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${ButtonLabel[type]}</button> `;
+function createDeleteButtonTemplate({type, isDeleting, isDisabled}){
+  return `<button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''} ${isDeleting ? 'Deleting...' : 'Delete'}>${ButtonLabel[type]}</button> `;
 }
 
 function createRollupButtonTemplate(){
@@ -29,7 +27,7 @@ ${createDeleteButtonTemplate({type})}
 ${(type !== EditType.CREATING) ? createRollupButtonTemplate() : ''}
   `;
 }
-//оферы
+
 function createEventOffers(offers, selectedOffersId, isDisabled) {
   return(
     `<section class="event__section  event__section--offers">
@@ -53,7 +51,7 @@ function createEventOffers(offers, selectedOffersId, isDisabled) {
     </div>` : '')}
   </section>`);
 }
-//описание и фото
+
 function renderDestinationPictures (pictures) {
   if (!pictures.length) {
     return '';
@@ -74,7 +72,7 @@ function createDestinationInfoTemplate (destination){
               ${renderDestinationPictures(pictures)}
           </section>`;
 }
-//список городов
+
 function renderDestinationOptionsTemplate (cities) {
   if (!cities.length) {
     return '';
@@ -115,7 +113,7 @@ function createEditPointTemplate(point, buttonType, destinations, offers) {
         <span class="visually-hidden">Price</span>
         &euro;
     </label>
-    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}" ${isDisabled ? 'disabled' : ''}></div > `;
+    <input class="event__input  event__input--price" id="event-price-1" type="number" required name="event-price" value="${basePrice}" ${isDisabled ? 'disabled' : ''}></div > `;
 
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -151,10 +149,10 @@ function createEditPointTemplate(point, buttonType, destinations, offers) {
     </div>
 
     ${createPriceTemplate(initialPrice, isDisabled)}
-  ${createEditControlsTemplate({type:buttonType})}
+    ${createEditControlsTemplate({type:buttonType, isSaving: point.isSaving, isDisabled: point.isDisabled, isDeleting: point.isDeleting})}
   </header>
-  ${isOffersAndDestinationInfo ? `<section class="event__details">
-  ${isOffers ? createEventOffers(offers, selectedOffersId, isDisabled) : ''}
+    ${isOffersAndDestinationInfo ? `<section class="event__details">
+    ${isOffers ? createEventOffers(offers, selectedOffersId, isDisabled) : ''}
     ${isDestinationInfo ? createDestinationInfoTemplate(initialDestination) : ''}
     </section>` : ''}
 </form>
