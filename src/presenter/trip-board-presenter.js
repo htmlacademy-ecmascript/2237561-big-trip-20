@@ -7,7 +7,7 @@ import EventListView from '../view/list-view.js';
 import ListSortView from '../view/list-sort-view.js';
 import NoPointsView from '../view/no-points-view.js';
 import LoadingView from '../view/loading-view.js';
-import PointPresenter from './point-presenter';
+import PointPresenter from './point-presenter.js';
 import NewEventPresenter from './new-event-presenter.js';
 
 const TimeLimit = {

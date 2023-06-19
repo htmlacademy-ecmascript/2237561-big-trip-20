@@ -1,13 +1,13 @@
-import TripMainInfoView from './view/header-main-info-view.js';
 import NewEventButtonView from './view/new-event-view.js';
-import EventPresenter from './presenter/event-presenter.js';
+import EventPresenter from './presenter/trip-board-presenter.js';
 import FilterPresenter from './presenter/filter-presenter.js';
+import HeaderTripInfoPresenter from './presenter/header-trip-info-presenter.js';
 import PointsModel from './model/points-model.js';
 import FilterModel from './model/filter-model.js';
-import {render, RenderPosition} from './framework/render.js';
+import {render} from './framework/render.js';
 import PointsApiService from './points-api-service.js';
 
-const AUTHORIZATION = 'Basic A5kEld3xsrdhnrtj00';
+const AUTHORIZATION = 'Basic A5kEld3xsrdhnrtj534534gjgjgj';
 const END_POINT = 'https://20.ecmascript.pages.academy/big-trip';
 
 
@@ -42,9 +42,11 @@ function handleNewPointButtonClick () {
   newPointButtonComponent.element.disabled = true;
 }
 
-render(new TripMainInfoView(), tripMainInfoElement, RenderPosition.AFTERBEGIN);
+const headerTripInfoPresenter = new HeaderTripInfoPresenter({
+  headerContainer: tripMainInfoElement,
+  pointsModel});
 
-
+headerTripInfoPresenter.init();
 filterPresenter.init();
 eventPresenter.init();
 pointsModel.init().finally(() => {
