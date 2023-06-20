@@ -285,14 +285,14 @@ export default class EditPointView extends AbstractStatefulView {
   };
 
   #dateFromChangeHandler = ([userDate]) => {
-    this._setState({
-      dateFrom: userDate
+    this.updateElement({
+      dateFrom: userDate,
     });
   };
 
   #dateToChangeHandler = ([userDate]) => {
-    this._setState({
-      dateTo: userDate
+    this.updateElement({
+      dateTo: userDate,
     });
   };
 
@@ -305,7 +305,7 @@ export default class EditPointView extends AbstractStatefulView {
         dateFormat: 'd/m/y H:i',
         defaultDate: this._state.dateFrom,
         maxDate: this._state.dateTo,
-        onClose: this.#dateFromChangeHandler,
+        onChange: this.#dateFromChangeHandler,
         'time_24hr': true
       }
     );
@@ -317,7 +317,7 @@ export default class EditPointView extends AbstractStatefulView {
         dateFormat: 'd/m/y H:i',
         defaultDate: this._state.dateTo,
         minDate: this._state.dateFrom,
-        onClose: this.#dateToChangeHandler,
+        onChange: this.#dateToChangeHandler,
         'time_24hr': true
       }
     );
