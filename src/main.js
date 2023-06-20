@@ -1,7 +1,6 @@
 import NewEventButtonView from './view/new-event-view.js';
 import EventPresenter from './presenter/trip-board-presenter.js';
 import FilterPresenter from './presenter/filter-presenter.js';
-import HeaderTripInfoPresenter from './presenter/header-trip-info-presenter.js';
 import PointsModel from './model/points-model.js';
 import FilterModel from './model/filter-model.js';
 import {render} from './framework/render.js';
@@ -42,11 +41,6 @@ function handleNewPointButtonClick () {
   newPointButtonComponent.element.disabled = true;
 }
 
-const headerTripInfoPresenter = new HeaderTripInfoPresenter({
-  headerContainer: tripMainInfoElement,
-  pointsModel});
-
-headerTripInfoPresenter.init();
 filterPresenter.init();
 eventPresenter.init();
 pointsModel.init().finally(() => {

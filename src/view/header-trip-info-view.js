@@ -1,78 +1,64 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import dayjs from 'dayjs';
-import {sortByDate} from '../utils/sort.js';
+//import dayjs from 'dayjs';
+import {getFormatInfoDate} from '../utils/date.js';
 
+const createTripMainInfoTemplate = (allPoints, destinations, offers) => {
+  const pointsLength = allPoints.length;
+  const getTripDates = (points) => ({
+    begin: getFormatInfoDate(points[0].dayFrom),
+    end: getFormatInfoDate(points[pointsLength - 1].dayFrom)
+  });
+  const datesTrip = getTripDates(allPoints);
 
-const DESTINATIONS_ITEMS_MAX = 3;
+  const getTotalPrice = () => {
+    let sumBasePrice = 0;
+    let sumOffers = 0;
+    allPoints.forEach((point) => {
+      sumBasePrice += point.basePrice;
+      const pointTypeOffer = offers.find((offer) => offer.type === point.type);
+      const checkedOffers = point.offers;
 
-const getDestinations = (points, destinations) => {
-  if (points.length === null) {
-    return '';
-  }
+      pointTypeOffer.offers.forEach((offer) => {
+        if (checkedOffers.some((checkedOffer) => checkedOffer === offer.id)) {
+          sumOffers += offer.price;
+        }
+      });
+    });
 
-  let selectedDestinations = destinations.filter((destination) => points.find((point) => point.destination === destination.id));
+    return sumBasePrice + sumOffers;
+  };
 
-  selectedDestinations = selectedDestinations.map((destination) => destination.name);
-
-  if (selectedDestinations.length > DESTINATIONS_ITEMS_MAX) {
-    const firstDestination = destinations.find((destination) => points[0].destination === destination.id).name;
-    const lastDestination = destinations.find((destination) => points.at(-1).destination === destination.id).name;
-
-    return [firstDestination, lastDestination].join(' &mdash; ... &mdash; ');
-  }
-
-  return selectedDestinations.join(' &mdash; ');
-};
-
-const getTripDates = (points = []) => {
-  const sortedPoints = points.sort(sortByDate);
-  return(sortedPoints.length > 0)
-    ? `${dayjs(sortedPoints.at(0).dateFrom).format('DD MMM')}&nbsp;&mdash;&nbsp${dayjs(sortedPoints.at(-1).dateTo).format('D MMM')}`
-    : '';
-};
-
-const getTripPrice = (points, offers) => {
-  if (points.length === 0) {
-    return 0;
-  }
-
-  const basePricesSum = points.reduce((total, point) => total + point.basePrice, 0);
-  let offersPriceSum = 0;
-
-  for (const point of points) {
-    const offersByType = offers.find((offer) => point.type === offer.type);
-
-    for (const offer of offersByType.offers) {
-      if (point.offers.includes(offer.id)) {
-        offersPriceSum += offer.price;
+  const cities = {
+    firstCity: destinations.find((destination) => destination.id === allPoints[0].destination).name,
+    secondCity() {
+      if (pointsLength > 1 && pointsLength <= 2) {
+        return `&mdash; ${destinations.find((destination) => destination.id === allPoints[1].destination).name}`;
       }
-    }
-  }
+      if (pointsLength > 2 && pointsLength <= 3) {
+        return `&mdash; ${destinations.find((destination) => destination.id === allPoints[1].destination).name} &mdash;`;
+      }
+      return '&mdash; &hellip; &mdash;';
+    },
+    thirdCity: destinations.find((destination) => destination.id === allPoints[pointsLength - 1].destination).name
+  };
 
-  const fullTripPrice = basePricesSum + offersPriceSum;
-
-  return fullTripPrice;
+  return `
+  <section class="trip-main__trip-info  trip-info">
+    <div class="trip-info__main">
+      <h1 class="trip-info__title">${cities.firstCity} ${pointsLength >= 2 ? cities.secondCity() : ''} ${pointsLength >= 3 ? cities.thirdCity : ''}</h1>
+      <p class="trip-info__dates">${datesTrip.begin}${pointsLength > 1 ? `&nbsp;&mdash;&nbsp; ${datesTrip.end}` : ''}</p>
+    </div>
+    <p class="trip-info__cost">
+      Total: &euro;&nbsp;<span class="trip-info__cost-value">${getTotalPrice()}</span>
+    </p>
+  </section>
+`;
 };
-
-function createTripMainInfoTemplate(points, destinations, offers) {
-
-  return ` <section class="trip-main__trip-info  trip-info">
-  <div class="trip-info__main">
-    <h1 class="trip-info__title">${getDestinations(points, destinations)}</h1>
-
-    <p class="trip-info__dates">${getTripDates(points)}</p>
-  </div>
-
-  <p class="trip-info__cost">
-    Total: &euro;&nbsp;<span class="trip-info__cost-value">${getTripPrice(points, offers)}</span>
-  </p>
-</section>`;
-}
 
 export default class HeaderTripInfoView extends AbstractView {
-  #points = [];
-  #offers = [];
-  #destinations = [];
+  #points = null;
+  #offers = null;
+  #destinations = null;
 
   constructor(points, offers, destinations) {
     super();

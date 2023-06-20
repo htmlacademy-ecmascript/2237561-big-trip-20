@@ -5,9 +5,14 @@ import duration from 'dayjs/plugin/duration';
 dayjs.extend(utc);
 dayjs.extend(duration);
 
+const DateFormat = {
+  HUMANIZE: 'MMM D',
+};
+
 const MSEC_IN_HOUR = 3600000;
 const MSEC_IN_DAY = 86400000;
 
+const getFormatInfoDate = (date, format = DateFormat.HUMANIZE) => date ? dayjs(date).format(format) : '';
 const humanizePointDate = (date, format) => dayjs(date).format(format);
 
 function getPointDuration(dateFrom, dateTo) {
@@ -39,4 +44,4 @@ function isPointPresent (point){
 function isPointPast (point){
   return dayjs().isAfter(point.dateTo);
 }
-export {humanizePointDate, getPointDuration, isPointFuture, isPointPresent, isPointPast};
+export {humanizePointDate, getPointDuration, isPointFuture, isPointPresent, isPointPast, getFormatInfoDate};

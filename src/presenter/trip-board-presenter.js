@@ -7,6 +7,7 @@ import EventListView from '../view/list-view.js';
 import ListSortView from '../view/list-sort-view.js';
 import NoPointsView from '../view/no-points-view.js';
 import LoadingView from '../view/loading-view.js';
+import HeaderTripInfoView from '../view/header-trip-info-view.js';
 import PointPresenter from './point-presenter.js';
 import NewEventPresenter from './new-event-presenter.js';
 
@@ -19,6 +20,7 @@ export default class EventPresenter {
   #eventContainer = null;
   #pointsModel = null;
   #filterModel = null;
+  #headerTripInfoView = null;
 
   #eventListComponent = new EventListView();
   #sortComponent = null;
@@ -157,6 +159,10 @@ export default class EventPresenter {
       remove(this.#noPointComponent);
     }
 
+    if (this.#headerTripInfoView !== null) {
+      remove(this.#headerTripInfoView);
+    }
+
     if (resetSortType) {
       this.#currentSortType = SortType.DAY;
     }
@@ -171,6 +177,16 @@ export default class EventPresenter {
     this.#clearEventList();
     this.#renderEventList();
   };
+
+  #renderTripInfo() {
+    this.#headerTripInfoView = new HeaderTripInfoView({
+      points: this.points,
+      destinations: this.destinations,
+      offers: this.offers
+    });
+    render(this.#headerTripInfoView, this.#eventContainer, RenderPosition.AFTERBEGIN);
+  }
+
 
   #renderSort() {
     this.#sortComponent = new ListSortView({
@@ -206,6 +222,10 @@ export default class EventPresenter {
   #renderEventList(){
     render(this.#eventListComponent, this.#eventContainer);
 
+    if (this.points.length > 0) {
+      this.#renderTripInfo();
+    }
+
     if (this.#isLoading) {
       this.#renderLoading();
       return;
@@ -214,7 +234,7 @@ export default class EventPresenter {
 
     if (!points.length) {
       this.#renderNoPoints();
-      remove(this.#sortComponent); //сортировка не возвращается после закрытия новой формы
+      remove(this.#sortComponent);
       return;
     }
 
