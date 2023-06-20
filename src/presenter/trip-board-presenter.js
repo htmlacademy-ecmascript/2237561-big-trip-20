@@ -189,6 +189,7 @@ export default class EventPresenter {
   #renderSort() {
     this.#sortComponent = new ListSortView({
       onSortTypeChange: this.#handleSortTypeChange,
+      currentSortType: this.#currentSortType,
     });
 
     render(this.#sortComponent, this.#eventListComponent.element, RenderPosition.BEFOREBEGIN);
