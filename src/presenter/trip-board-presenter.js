@@ -18,6 +18,7 @@ const TimeLimit = {
 
 export default class EventPresenter {
   #eventContainer = null;
+  #tripInfoContainer = null;
   #pointsModel = null;
   #filterModel = null;
   #headerTripInfoView = null;
@@ -39,13 +40,14 @@ export default class EventPresenter {
     upperLimit: TimeLimit.UPPER_LIMIT
   });
 
-  constructor({eventContainer, pointsModel, filterModel, onNewPointDestroy}) {
+  constructor({eventContainer, tripInfoContainer, pointsModel, filterModel, onNewPointDestroy}) {
     this.#eventContainer = eventContainer;
+    this.#tripInfoContainer = tripInfoContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
 
     this.#newEventPresenter = new NewEventPresenter({
-      pointListContainer: this.#eventListComponent.element,
+      pointListContainer: this.#tripInfoContainer.element,
       onDataChange: this.#handleViewAction,
       onDestroy: onNewPointDestroy
     });
@@ -179,12 +181,8 @@ export default class EventPresenter {
   };
 
   #renderTripInfo() {
-    this.#headerTripInfoView = new HeaderTripInfoView({
-      points: this.points,
-      destinations: this.destinations,
-      offers: this.offers
-    });
-    render(this.#headerTripInfoView, this.#eventContainer, RenderPosition.AFTERBEGIN);
+    this.#headerTripInfoView = new HeaderTripInfoView(this.points, this.destinations,this.offers);
+    render(this.#headerTripInfoView, this.#tripInfoContainer, RenderPosition.AFTERBEGIN);
   }
 
 

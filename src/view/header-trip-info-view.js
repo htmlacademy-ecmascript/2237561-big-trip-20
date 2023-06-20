@@ -1,5 +1,4 @@
 import AbstractView from '../framework/view/abstract-view.js';
-//import dayjs from 'dayjs';
 import {getFormatInfoDate} from '../utils/date.js';
 
 const createTripMainInfoTemplate = (allPoints, destinations, offers) => {

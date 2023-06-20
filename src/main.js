@@ -21,6 +21,7 @@ const newPointButtonComponent = new NewEventButtonView({
 
 const eventPresenter = new EventPresenter({
   eventContainer: tripEventsElement,
+  tripInfoContainer: tripMainInfoElement,
   pointsModel,
   filterModel,
   onNewPointDestroy: handleNewPointFormClose
