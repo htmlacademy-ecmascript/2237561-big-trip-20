@@ -2,12 +2,17 @@ import AbstractView from '../framework/view/abstract-view.js';
 import {getFormatInfoDate} from '../utils/date.js';
 
 const createTripMainInfoTemplate = (allPoints, destinations, offers) => {
+
   const pointsLength = allPoints.length;
-  const getTripDates = (points) => ({
-    begin: getFormatInfoDate(points[0].dayFrom),
-    end: getFormatInfoDate(points[pointsLength - 1].dayFrom)
-  });
-  const datesTrip = getTripDates(allPoints);
+  const getTripDates = (points) => {
+
+    const dateFrom = points[0].dateFrom;
+    const dateTo = points[pointsLength - 1].dateTo;
+
+    return (dateFrom.getMonth() === dateTo.getMonth())
+      ? `${getFormatInfoDate(dateFrom)} — ${dateTo.getDate()}`
+      : `${getFormatInfoDate(dateFrom)} — ${getFormatInfoDate(dateTo)}`;
+  };
 
   const getTotalPrice = () => {
     let sumBasePrice = 0;
@@ -45,7 +50,7 @@ const createTripMainInfoTemplate = (allPoints, destinations, offers) => {
   <section class="trip-main__trip-info  trip-info">
     <div class="trip-info__main">
       <h1 class="trip-info__title">${cities.firstCity} ${pointsLength >= 2 ? cities.secondCity() : ''} ${pointsLength >= 3 ? cities.thirdCity : ''}</h1>
-      <p class="trip-info__dates">${datesTrip.begin}${pointsLength > 1 ? `&nbsp;&mdash;&nbsp; ${datesTrip.end}` : ''}</p>
+      <p class="trip-info__dates">${getTripDates(allPoints)}</p>
     </div>
     <p class="trip-info__cost">
       Total: &euro;&nbsp;<span class="trip-info__cost-value">${getTotalPrice()}</span>

@@ -47,7 +47,7 @@ export default class EventPresenter {
     this.#filterModel = filterModel;
 
     this.#newEventPresenter = new NewEventPresenter({
-      pointListContainer: this.#tripInfoContainer.element,
+      pointListContainer: this.#eventListComponent.element,
       onDataChange: this.#handleViewAction,
       onDestroy: onNewPointDestroy
     });

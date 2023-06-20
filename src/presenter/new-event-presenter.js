@@ -36,7 +36,7 @@ export default class NewEventPresenter {
       onDeleteClick: this.#handleDeleteClick
     });
 
-    render(this.#pointEditComponent, this.#pointListContainer, RenderPosition.AFTEREND);
+    render(this.#pointEditComponent, this.#pointListContainer, RenderPosition.AFTERBEGIN);
 
     document.addEventListener('keydown', this.#escKeyDownHandler);
   }
