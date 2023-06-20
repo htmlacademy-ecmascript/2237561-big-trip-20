@@ -7,7 +7,8 @@ import EventListView from '../view/list-view.js';
 import ListSortView from '../view/list-sort-view.js';
 import NoPointsView from '../view/no-points-view.js';
 import LoadingView from '../view/loading-view.js';
-import PointPresenter from './point-presenter';
+import HeaderTripInfoView from '../view/header-trip-info-view.js';
+import PointPresenter from './point-presenter.js';
 import NewEventPresenter from './new-event-presenter.js';
 
 const TimeLimit = {
@@ -17,8 +18,10 @@ const TimeLimit = {
 
 export default class EventPresenter {
   #eventContainer = null;
+  #tripInfoContainer = null;
   #pointsModel = null;
   #filterModel = null;
+  #headerTripInfoView = null;
 
   #eventListComponent = new EventListView();
   #sortComponent = null;
@@ -37,8 +40,9 @@ export default class EventPresenter {
     upperLimit: TimeLimit.UPPER_LIMIT
   });
 
-  constructor({eventContainer, pointsModel, filterModel, onNewPointDestroy}) {
+  constructor({eventContainer, tripInfoContainer, pointsModel, filterModel, onNewPointDestroy}) {
     this.#eventContainer = eventContainer;
+    this.#tripInfoContainer = tripInfoContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
 
@@ -157,6 +161,10 @@ export default class EventPresenter {
       remove(this.#noPointComponent);
     }
 
+    if (this.#headerTripInfoView !== null) {
+      remove(this.#headerTripInfoView);
+    }
+
     if (resetSortType) {
       this.#currentSortType = SortType.DAY;
     }
@@ -172,9 +180,16 @@ export default class EventPresenter {
     this.#renderEventList();
   };
 
+  #renderTripInfo() {
+    this.#headerTripInfoView = new HeaderTripInfoView(this.points, this.destinations,this.offers);
+    render(this.#headerTripInfoView, this.#tripInfoContainer, RenderPosition.AFTERBEGIN);
+  }
+
+
   #renderSort() {
     this.#sortComponent = new ListSortView({
       onSortTypeChange: this.#handleSortTypeChange,
+      currentSortType: this.#currentSortType,
     });
 
     render(this.#sortComponent, this.#eventListComponent.element, RenderPosition.BEFOREBEGIN);
@@ -206,6 +221,10 @@ export default class EventPresenter {
   #renderEventList(){
     render(this.#eventListComponent, this.#eventContainer);
 
+    if (this.points.length > 0) {
+      this.#renderTripInfo();
+    }
+
     if (this.#isLoading) {
       this.#renderLoading();
       return;
@@ -214,7 +233,7 @@ export default class EventPresenter {
 
     if (!points.length) {
       this.#renderNoPoints();
-      remove(this.#sortComponent); //сортировка не возвращается после закрытия новой формы
+      remove(this.#sortComponent);
       return;
     }
 

@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import {humanizePointDate, getPointDuration} from '../utils/time.js';
+import {humanizePointDate, getPointDuration} from '../utils/date.js';
 import { getOffersByType, getSelectedDestination, getSelectedOffers } from '../utils/point.js';
 
 const createOffersTemplate = (offers) => {
