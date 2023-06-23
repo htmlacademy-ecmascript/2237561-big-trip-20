@@ -42,10 +42,6 @@ function handleNewPointButtonClick () {
   newPointButtonComponent.element.disabled = true;
 }
 
-pointsModel.addObserver(()=> {
-  newPointButtonComponent.element.disabled = pointsModel.flag;
-});
-
 filterPresenter.init();
 eventPresenter.init();
 pointsModel.init().finally(() => {

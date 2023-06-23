@@ -8,7 +8,6 @@ import ListSortView from '../view/list-sort-view.js';
 import NoPointsView from '../view/no-points-view.js';
 import LoadingView from '../view/loading-view.js';
 import HeaderTripInfoView from '../view/header-trip-info-view.js';
-import ErrorView from '../view/error-view.js';
 import PointPresenter from './point-presenter.js';
 import NewEventPresenter from './new-event-presenter.js';
 
@@ -33,7 +32,6 @@ export default class EventPresenter {
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
 
-  #errorComponent = new ErrorView();
   #loadingComponent = new LoadingView();
   #isLoading = true;
 
@@ -206,10 +204,6 @@ export default class EventPresenter {
     render(this.#loadingComponent, this.#eventListComponent.element, RenderPosition.AFTERBEGIN);
   }
 
-  #renderError = () => {
-    render(this.#errorComponent, this.#eventContainer);
-  };
-
   #renderPoint(point, allDestinations, allOffers) {
     const pointPresenter = new PointPresenter({
       pointListContainer: this.#eventListComponent.element,
@@ -236,13 +230,6 @@ export default class EventPresenter {
       return;
     }
     const points = this.points;
-
-    if (!points.length
-      && !this.#pointsModel.destinations.length
-      && !this.#pointsModel.offers.length) {
-      this.#renderError();
-      return;
-    }
 
     if (!points.length) {
       this.#renderNoPoints();
